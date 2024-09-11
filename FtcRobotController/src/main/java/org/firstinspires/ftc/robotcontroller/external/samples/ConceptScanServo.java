@@ -78,6 +78,7 @@ public class ConceptScanServo extends LinearOpMode {
         // Scan servo till stop pressed.
         while(opModeIsActive()){
 
+
             double x = gamepad1.left_stick_x;
             x = (x+1)/2;
 
@@ -87,6 +88,7 @@ public class ConceptScanServo extends LinearOpMode {
             //{
                // x = 0;
             //}
+
 
 
 
