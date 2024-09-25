@@ -33,6 +33,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 /*
@@ -72,16 +73,20 @@ public class MecanumDrive extends LinearOpMode {
     private DcMotor leftBackDrive = null;
     private DcMotor rightFrontDrive = null;
     private DcMotor rightBackDrive = null;
+    private Servo claw_servo;
 
     @Override
     public void runOpMode() {
 
         // Initialize the hardware variables. Note that the strings used here must correspond
         // to the names assigned during the robot configuration step on the DS or RC devices.
+        /*
         leftFrontDrive  = hardwareMap.get(DcMotor.class, "lf_drive");
         leftBackDrive  = hardwareMap.get(DcMotor.class, "lb_drive");
         rightFrontDrive = hardwareMap.get(DcMotor.class, "rf_drive");
         rightBackDrive = hardwareMap.get(DcMotor.class, "rb_drive");
+        */
+        claw_servo = hardwareMap.get(Servo.class, "claw");
 
         // ########################################################################################
         // !!!            IMPORTANT Drive Information. Test your motor directions.            !!!!!
@@ -104,6 +109,8 @@ public class MecanumDrive extends LinearOpMode {
 
         waitForStart();
         runtime.reset();
+
+        int claw_pos = 0;
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
@@ -134,6 +141,18 @@ public class MecanumDrive extends LinearOpMode {
                 rightBackPower  /= max;
             }
 
+            if (gamepad1.dpad_left) {
+                claw_pos -= 1;
+            }
+            if (claw_pos < 0)
+                claw_pos = 0;
+            if (gamepad1.dpad_right) {
+                claw_pos += 1;
+            }
+            if (claw_pos > 1000)
+                claw_pos = 1000;
+            claw_servo.setPosition(claw_pos/1000.0);
+
             // This is test code:
             //
             // Uncomment the following code to test your motor directions.
@@ -144,12 +163,10 @@ public class MecanumDrive extends LinearOpMode {
             //      the setDirection() calls above.
             // Once the correct motors move in the correct direction re-comment this code.
 
-            /*
             leftFrontPower  = gamepad1.x ? 1.0 : 0.0;  // X gamepad
             leftBackPower   = gamepad1.a ? 1.0 : 0.0;  // A gamepad
             rightFrontPower = gamepad1.y ? 1.0 : 0.0;  // Y gamepad
             rightBackPower  = gamepad1.b ? 1.0 : 0.0;  // B gamepad
-            */
 
             // Send calculated power to wheels
             leftFrontDrive.setPower(leftFrontPower);
@@ -161,6 +178,7 @@ public class MecanumDrive extends LinearOpMode {
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
             telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
+            telemetry.addData("Claw position:", "%d", claw_pos);
             telemetry.update();
         }
     }}
