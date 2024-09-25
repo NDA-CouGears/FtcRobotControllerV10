@@ -80,12 +80,10 @@ public class MecanumDrive extends LinearOpMode {
 
         // Initialize the hardware variables. Note that the strings used here must correspond
         // to the names assigned during the robot configuration step on the DS or RC devices.
-        /*
         leftFrontDrive  = hardwareMap.get(DcMotor.class, "lf_drive");
         leftBackDrive  = hardwareMap.get(DcMotor.class, "lb_drive");
         rightFrontDrive = hardwareMap.get(DcMotor.class, "rf_drive");
         rightBackDrive = hardwareMap.get(DcMotor.class, "rb_drive");
-        */
         claw_servo = hardwareMap.get(Servo.class, "claw");
 
         // ########################################################################################
