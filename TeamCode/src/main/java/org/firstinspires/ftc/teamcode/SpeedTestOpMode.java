@@ -32,7 +32,7 @@ public class SpeedTestOpMode  extends LinearOpMode {
         imu.initialize(new IMU.Parameters(orientationOnRobot));
         imu.resetYaw();
 
-        //servo = hardwareMap.get(Servo.class, "left_hand");
+        servo = hardwareMap.get(Servo.class, "left_hand");
 
         /////////////////////////////////////////////
         // Initialization complete, wait for start
