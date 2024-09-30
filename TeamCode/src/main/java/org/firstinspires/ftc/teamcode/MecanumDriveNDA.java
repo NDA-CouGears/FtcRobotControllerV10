@@ -107,7 +107,7 @@ public class MecanumDriveNDA extends LinearOpMode {
         waitForStart();
         runtime.reset();
 
-        int claw_pos = 0;
+        int claw_pos = 5000;
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
@@ -146,9 +146,9 @@ public class MecanumDriveNDA extends LinearOpMode {
             if (gamepad1.dpad_right) {
                 claw_pos += 1;
             }
-            if (claw_pos > 1000)
-                claw_pos = 1000;
-            claw_servo.setPosition(claw_pos/1000.0);
+            if (claw_pos > 10000)
+                claw_pos = 10000;
+            claw_servo.setPosition(claw_pos/10000.0);
 
             // This is test code:
             //
