@@ -32,6 +32,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -83,7 +84,7 @@ public class MecanumDriveNDA extends LinearOpMode {
         leftBackDrive  = hardwareMap.get(DcMotor.class, "lb_drive");
         rightFrontDrive = hardwareMap.get(DcMotor.class, "rf_drive");
         rightBackDrive = hardwareMap.get(DcMotor.class, "rb_drive");
-        claw_servo = hardwareMap.get(Servo.class, "claw");
+        //claw_servo = hardwareMap.get(Servo.class, "claw");
 
         // ########################################################################################
         // !!!            IMPORTANT Drive Information. Test your motor directions.            !!!!!
@@ -95,9 +96,9 @@ public class MecanumDriveNDA extends LinearOpMode {
         // when you first test your robot, push the left joystick forward and observe the direction the wheels turn.
         // Reverse the direction (flip FORWARD <-> REVERSE ) of any wheel that runs backward
         // Keep testing until ALL the wheels move the robot forward when you push the left joystick forward.
-        leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
-        leftBackDrive.setDirection(DcMotor.Direction.REVERSE);
-        rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
+        leftFrontDrive.setDirection(DcMotor.Direction.FORWARD);
+        leftBackDrive.setDirection(DcMotor.Direction.FORWARD);
+        rightFrontDrive.setDirection(DcMotor.Direction.REVERSE);
         rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
 
         // Wait for the game to start (driver presses START)
@@ -148,7 +149,7 @@ public class MecanumDriveNDA extends LinearOpMode {
             }
             if (claw_pos > 10000)
                 claw_pos = 10000;
-            claw_servo.setPosition(claw_pos/10000.0);
+            //claw_servo.setPosition(claw_pos/10000.0);
 
             // This is test code:
             //
@@ -159,11 +160,12 @@ public class MecanumDriveNDA extends LinearOpMode {
             //   2) Then make sure they run in the correct direction by modifying the
             //      the setDirection() calls above.
             // Once the correct motors move in the correct direction re-comment this code.
-
+            /*
             leftFrontPower  = gamepad1.x ? 1.0 : 0.0;  // X gamepad
             leftBackPower   = gamepad1.a ? 1.0 : 0.0;  // A gamepad
             rightFrontPower = gamepad1.y ? 1.0 : 0.0;  // Y gamepad
             rightBackPower  = gamepad1.b ? 1.0 : 0.0;  // B gamepad
+            */
 
             // Send calculated power to wheels
             leftFrontDrive.setPower(leftFrontPower);
