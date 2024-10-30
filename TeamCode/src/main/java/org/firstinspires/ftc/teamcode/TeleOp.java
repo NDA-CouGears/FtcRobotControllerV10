@@ -35,8 +35,6 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-
-
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name="Main Drive", group="Drive")
 public class TeleOp extends RobotParent {
 
@@ -50,6 +48,7 @@ public class TeleOp extends RobotParent {
 
         boolean holdingAtA = false;
         boolean holdingAtB = false;
+
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
             double max;
@@ -78,7 +77,6 @@ public class TeleOp extends RobotParent {
                 leftBackPower   /= max;
                 rightBackPower  /= max;
             }
-
 
             // Send calculated power to wheels
             leftFrontDrive.setPower(leftFrontPower);
@@ -139,8 +137,15 @@ public class TeleOp extends RobotParent {
                 telemetry.addData("Motor position: ", armMotor.getCurrentPosition());
             }
 
+            //pressing right bumper opens claw, left bumper closes claw
 
+            if (gamepad1.right_bumper){
+                claw.setPosition(ClawOpen);
+            }
 
+            else if (gamepad1.left_bumper){
+                claw.setPosition(ClawClosed);
+            }
 
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());

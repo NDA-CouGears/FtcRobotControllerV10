@@ -20,8 +20,8 @@ public abstract class RobotParent extends LinearOpMode {
 
     protected TouchSensor touchSensor = null;
 
-    final protected static double ClawClosed = 0.68;
-    final protected static double ClawOpen = 0.5;
+    final protected static double ClawClosed = 0.32;
+    final protected static double ClawOpen = 0.14;
 
 
     public void initHardware(){
