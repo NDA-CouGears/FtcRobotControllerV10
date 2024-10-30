@@ -38,6 +38,15 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name="Main Drive", group="Drive")
 public class TeleOp extends RobotParent {
 
+    private double signPreserveSquare(double value) {
+
+        if (value > 0) {
+            return value * value;
+        }
+        else {
+            return -(value * value);
+        }
+    }
     @Override
     public void runOpMode() {
 
@@ -54,9 +63,11 @@ public class TeleOp extends RobotParent {
             double max;
 
             // POV Mode uses left joystick to go forward & strafe, and right joystick to rotate.
-            double axial   = -gamepad1.left_stick_y;  // Note: pushing stick forward gives negative value
-            double lateral =  gamepad1.left_stick_x;
-            double yaw     =  gamepad1.right_stick_x;
+
+
+            double axial = signPreserveSquare(gamepad1.left_stick_y*-0.9); // Remember, this is reversed!
+            double lateral = signPreserveSquare(gamepad1.left_stick_x * 0.7); // Counteract imperfect strafing
+            double yaw = (signPreserveSquare(gamepad1.right_stick_x * 1))*0.5;
 
             // Combine the joystick requests for each axis-motion to determine each wheel's power.
             // Set up a variable for each drive wheel to save the power level for telemetry.
