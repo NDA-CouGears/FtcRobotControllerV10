@@ -40,50 +40,10 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name="Main Drive", group="Drive")
 public class TeleOp extends RobotParent {
 
-    // Declare OpMode members for each of the 4 motors.
-    private ElapsedTime runtime = new ElapsedTime();
-    private DcMotor leftFrontDrive = null;
-    private DcMotor leftBackDrive = null;
-    private DcMotor rightFrontDrive = null;
-    private DcMotor rightBackDrive = null;
-
-    private Servo claw = null;
-
-    private DcMotor armMotor = null;
-
-    private TouchSensor touchSensor = null;
-
-    final private static double ClawClosed = 0.68;
-    final private static double ClawOpen = 0.5;
-
     @Override
     public void runOpMode() {
 
-        leftFrontDrive  = hardwareMap.get(DcMotor.class, "lf_drive");
-        leftBackDrive  = hardwareMap.get(DcMotor.class, "lb_drive");
-        rightFrontDrive = hardwareMap.get(DcMotor.class, "rf_drive");
-        rightBackDrive = hardwareMap.get(DcMotor.class, "rb_drive");
-
-        claw = hardwareMap.get(Servo.class, "claw");
-
-        armMotor = hardwareMap.get(DcMotor.class, "lift");
-
-        touchSensor = hardwareMap.get(TouchSensor.class, "touchSensor");
-
-        leftFrontDrive.setDirection(DcMotor.Direction.FORWARD);
-        leftBackDrive.setDirection(DcMotor.Direction.FORWARD);
-        rightFrontDrive.setDirection(DcMotor.Direction.REVERSE);
-        rightBackDrive.setDirection(DcMotor.Direction.REVERSE);
-
-        armMotor.setDirection(DcMotor.Direction.FORWARD);
-        armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        claw.setDirection(Servo.Direction.FORWARD);
-
-        // Wait for the game to start (driver presses START)
-        telemetry.addData("Status", "Initialized");
-        telemetry.update();
+        initHardware();
 
         waitForStart();
         runtime.reset();
