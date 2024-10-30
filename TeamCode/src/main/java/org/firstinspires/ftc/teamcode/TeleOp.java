@@ -35,7 +35,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name="Main Drive", group="Drive")
+@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name="TeleOp", group="Drive")
 public class TeleOp extends RobotParent {
 
     private double signPreserveSquare(double value) {
@@ -150,11 +150,11 @@ public class TeleOp extends RobotParent {
 
             //pressing right bumper opens claw, left bumper closes claw
 
-            if (gamepad1.right_bumper){
+            if (gamepad2.right_bumper){
                 claw.setPosition(ClawOpen);
             }
 
-            else if (gamepad1.left_bumper){
+            else if (gamepad2.left_bumper){
                 claw.setPosition(ClawClosed);
             }
 
