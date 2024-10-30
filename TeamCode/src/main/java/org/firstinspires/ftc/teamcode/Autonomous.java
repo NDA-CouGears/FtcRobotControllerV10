@@ -8,6 +8,11 @@ public class Autonomous extends RobotParent {
 
     @Override
     public void runOpMode() throws InterruptedException {
+        initHardware();
+
+        waitForStart();
+
+
 
     }
 }
