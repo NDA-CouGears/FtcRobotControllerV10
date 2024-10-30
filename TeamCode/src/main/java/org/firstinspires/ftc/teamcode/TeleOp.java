@@ -38,7 +38,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name="Main Drive", group="Drive")
-public class TeleOp extends LinearOpMode {
+public class TeleOp extends RobotParent {
 
     // Declare OpMode members for each of the 4 motors.
     private ElapsedTime runtime = new ElapsedTime();
