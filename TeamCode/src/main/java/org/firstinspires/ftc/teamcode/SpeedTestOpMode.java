@@ -19,14 +19,15 @@ public class SpeedTestOpMode  extends LinearOpMode {
 
     DcMotor lift;
     Servo claw;
+    Servo arm;
     IMU imu;
 
     @Override
     public void runOpMode() throws InterruptedException {
         /////////////////////////////////////////////
         // OpMode initialization
-        RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.FORWARD;
-        RevHubOrientationOnRobot.UsbFacingDirection  usbDirection  = RevHubOrientationOnRobot.UsbFacingDirection.UP;
+        RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.UP;
+        RevHubOrientationOnRobot.UsbFacingDirection  usbDirection  = RevHubOrientationOnRobot.UsbFacingDirection.FORWARD;
         RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(logoDirection, usbDirection);
 
         // Now initialize the IMU with this mounting orientation
@@ -80,6 +81,11 @@ public class SpeedTestOpMode  extends LinearOpMode {
                 lift.setPower(lift_delta);
             }
 
+            if (imu != null) {
+                if (gamepad1.y) {
+                    imu.resetYaw();
+                }
+            }
             // Retrieve Rotational Angles and Velocities
             YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
             AngularVelocity angularVelocity = imu.getRobotAngularVelocity(AngleUnit.DEGREES);
