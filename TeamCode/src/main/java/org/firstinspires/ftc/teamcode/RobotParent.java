@@ -15,6 +15,7 @@ public abstract class RobotParent extends LinearOpMode {
     protected DcMotor rightBackDrive = null;
 
     protected Servo claw = null;
+    protected Servo arm = null;
 
     protected DcMotor armMotor = null;
 
@@ -31,6 +32,7 @@ public abstract class RobotParent extends LinearOpMode {
         rightBackDrive = hardwareMap.get(DcMotor.class, "rb_drive");
 
         claw = hardwareMap.get(Servo.class, "claw");
+        arm = hardwareMap.get(Servo.class, "arm");
 
         armMotor = hardwareMap.get(DcMotor.class, "lift");
 

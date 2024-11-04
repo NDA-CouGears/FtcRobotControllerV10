@@ -15,6 +15,9 @@ import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
 @TeleOp(name="Hardware Test", group="Tests")
 public class SpeedTestOpMode  extends LinearOpMode {
+    public static double ARM_UP = 0.24;
+    public static double ARM_DOWN = 0.615;
+
     private ElapsedTime runtime = new ElapsedTime();
 
     DcMotor lift;
@@ -38,11 +41,20 @@ public class SpeedTestOpMode  extends LinearOpMode {
 
         double claw_pos = 0;
         claw = hardwareMap.get(Servo.class, "claw");
-        //arm = hardwareMap.get(Servo.class, "arm");
+
+        double arm_pos = ARM_UP;
+        arm = hardwareMap.get(Servo.class, "arm");
+        arm.setPosition(arm_pos);
 
         lift = hardwareMap.get(DcMotor.class, "lift");
-        lift.setZeroPowerBehavior(DcMotor. ZeroPowerBehavior.BRAKE);
-        lift.setDirection(DcMotorSimple.Direction.REVERSE);
+        int lift_hold_pos = 0;
+        boolean lift_holding = false;
+        if (lift != null) {
+            lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            lift.setDirection(DcMotorSimple.Direction.REVERSE);
+        }
 
         /////////////////////////////////////////////
         // Initialization complete, wait for start
@@ -75,10 +87,46 @@ public class SpeedTestOpMode  extends LinearOpMode {
                 claw.setPosition(claw_pos);
             }
 
-            if (lift != null) {
-                double lift_delta = gamepad1.left_stick_y;
+            if (arm != null) {
+                if (gamepad1.dpad_down) {
+                    arm_pos -= 0.005;
+                }
+                else if (gamepad1.dpad_up) {
+                    arm_pos += 0.005;
+                }
+                else if (gamepad1.left_bumper) {
+                    arm_pos = ARM_UP;
+                }
+                else if (gamepad1.right_bumper) {
+                    arm_pos = ARM_DOWN;
+                }
+                if (arm_pos > 1) {
+                    arm_pos = 1;
+                }
+                else if (arm_pos < 0) {
+                    arm_pos = 0;
+                }
+                arm.setPosition(arm_pos);
+            }
 
-                lift.setPower(lift_delta);
+            if (lift != null) {
+                if (Math.abs(gamepad1.left_stick_y) < 0.01) {
+                    lift.setTargetPosition(lift_hold_pos);
+                    lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    lift.setPower(1);
+
+                    while (opModeIsActive() && lift.isBusy() && (Math.abs(gamepad1.left_stick_y) < 0.01)) {
+                        idle();
+                    }
+
+                    lift.setPower(0);
+                }
+                else {
+                    double lift_delta = gamepad1.left_stick_y;
+                    lift_hold_pos = lift.getCurrentPosition();
+                    lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                    lift.setPower(lift_delta);
+                }
             }
 
             if (imu != null) {
@@ -90,15 +138,21 @@ public class SpeedTestOpMode  extends LinearOpMode {
             YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
             AngularVelocity angularVelocity = imu.getRobotAngularVelocity(AngleUnit.DEGREES);
 
-            telemetry.addData("Lift position", lift.getCurrentPosition());
-            telemetry.addData("Claw position", claw.getPosition());
+            if (lift != null)
+                telemetry.addData("Lift position", lift.getCurrentPosition());
+            if (claw != null)
+                telemetry.addData("Claw position", claw.getPosition());
+            if (arm != null)
+                telemetry.addData("Arm position", arm.getPosition());
 
-            telemetry.addData("Yaw (Z)", "%.2f Deg. (Heading)", orientation.getYaw(AngleUnit.DEGREES));
-            telemetry.addData("Pitch (X)", "%.2f Deg.", orientation.getPitch(AngleUnit.DEGREES));
-            telemetry.addData("Roll (Y)", "%.2f Deg.\n", orientation.getRoll(AngleUnit.DEGREES));
-            telemetry.addData("Yaw (Z) velocity", "%.2f Deg/Sec", angularVelocity.zRotationRate);
-            telemetry.addData("Pitch (X) velocity", "%.2f Deg/Sec", angularVelocity.xRotationRate);
-            telemetry.addData("Roll (Y) velocity", "%.2f Deg/Sec", angularVelocity.yRotationRate);
+            if (imu != null) {
+                telemetry.addData("Yaw (Z)", "%.2f Deg. (Heading)", orientation.getYaw(AngleUnit.DEGREES));
+                telemetry.addData("Pitch (X)", "%.2f Deg.", orientation.getPitch(AngleUnit.DEGREES));
+                telemetry.addData("Roll (Y)", "%.2f Deg.\n", orientation.getRoll(AngleUnit.DEGREES));
+                telemetry.addData("Yaw (Z) velocity", "%.2f Deg/Sec", angularVelocity.zRotationRate);
+                telemetry.addData("Pitch (X) velocity", "%.2f Deg/Sec", angularVelocity.xRotationRate);
+                telemetry.addData("Roll (Y) velocity", "%.2f Deg/Sec", angularVelocity.yRotationRate);
+            }
             telemetry.update();
         }
     }
