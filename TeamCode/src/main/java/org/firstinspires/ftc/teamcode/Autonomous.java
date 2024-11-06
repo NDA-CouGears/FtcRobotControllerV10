@@ -17,15 +17,24 @@ import com.acmerobotics.roadrunner.Vector2d;
 
 public class Autonomous extends RobotParent {
 
+    protected static final int RIGHT_DIRECTION = 1;
+
+    protected static final int LEFT_DIRECTION = -1;
+
+    //private void turn()
+
     @Override
     public void runOpMode() throws InterruptedException {
         initHardware();
         MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(0,0,0));
 
-        // Delcare Trajectory as such
+        // Declare Trajectory as such
         Action TrajectoryAction1 = drive.actionBuilder(drive.pose)
                 .lineToX(10)
                 .build();
+        //Action Turn90Action = drive.actionBuilder(drive.pose)
+
+
 
         waitForStart();
 
