@@ -107,7 +107,7 @@ public class TeleOp extends RobotParent {
         while (opModeIsActive()) {
             mDrive();
             arm();
-            claw();
+            //claw();
 
             telemetry.addData("Status", "Test Run Time: " + runTime);
 
@@ -127,13 +127,15 @@ public class TeleOp extends RobotParent {
                 claw.setPosition(claw_pos);
             }
             if (arm != null) {
+                /*
                 if (gamepad1.dpad_down) {
                     arm_pos -= 0.005;
                 }
                 else if (gamepad1.dpad_up) {
                     arm_pos += 0.005;
                 }
-                else if (gamepad1.left_bumper) {
+                */
+                if (gamepad1.left_bumper) {
                     arm_pos = ARM_UP;
                 }
                 else if (gamepad1.right_bumper) {
@@ -147,6 +149,7 @@ public class TeleOp extends RobotParent {
                 }
                 arm.setPosition(arm_pos);
             }
+            /*
             if (lift != null) {
                 if (Math.abs(gamepad1.left_stick_y) < 0.01) {
                     lift.setTargetPosition(lift_hold_pos);
@@ -175,6 +178,7 @@ public class TeleOp extends RobotParent {
             YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
             AngularVelocity angularVelocity = imu.getRobotAngularVelocity(AngleUnit.DEGREES);
 
+
             if (lift != null)
                 telemetry.addData("Lift position", lift.getCurrentPosition());
             if (claw != null)
@@ -189,6 +193,8 @@ public class TeleOp extends RobotParent {
                 telemetry.addData("Pitch (X) velocity", "%.2f Deg/Sec", angularVelocity.xRotationRate);
                 telemetry.addData("Roll (Y) velocity", "%.2f Deg/Sec", angularVelocity.yRotationRate);
             }
+            */
+             
 
             // Show the elapsed game time and wheel power
             /*
