@@ -83,6 +83,7 @@ public class TeleOp extends RobotParent {
             arm = hardwareMap.get(Servo.class, "arm");
             arm.setPosition(arm_pos);
 
+            /*
             lift = hardwareMap.get(DcMotor.class, "lift");
             int lift_hold_pos = 0;
             boolean lift_holding = false;
@@ -93,6 +94,8 @@ public class TeleOp extends RobotParent {
                 lift.setDirection(DcMotorSimple.Direction.REVERSE);
             }
 
+             */
+
             /////////////////////////////////////////////
             // Initialization complete, wait for start
             telemetry.addData(">", "Press Start to run tests.");
@@ -101,7 +104,7 @@ public class TeleOp extends RobotParent {
 
         waitForStart();
         runtime.reset();
-            String runTime = runtime.toString();
+            //String runTime = runtime.toString();
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
@@ -109,7 +112,7 @@ public class TeleOp extends RobotParent {
             arm();
             //claw();
 
-            telemetry.addData("Status", "Test Run Time: " + runTime);
+            //telemetry.addData("Status", "Test Run Time: " + runTime);
 
             if (claw != null) {
                 if (gamepad1.dpad_left) {
@@ -194,7 +197,7 @@ public class TeleOp extends RobotParent {
                 telemetry.addData("Roll (Y) velocity", "%.2f Deg/Sec", angularVelocity.yRotationRate);
             }
             */
-             
+
 
             // Show the elapsed game time and wheel power
             /*
