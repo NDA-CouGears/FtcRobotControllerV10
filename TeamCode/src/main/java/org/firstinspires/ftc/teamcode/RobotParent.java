@@ -21,8 +21,8 @@ public abstract class RobotParent extends LinearOpMode {
 
     protected TouchSensor touchSensor = null;
 
-    final protected static double ClawClosed = 0.32;
-    final protected static double ClawOpen = 0.14;
+    final protected static double ClawClosed = 0.23;
+    final protected static double ClawOpen = 0.92;
     static final double DRIVE_GEAR_REDUCTION = 1.0;
     static final double WHEEL_DIAMETER_MM = 102;
     static final double COUNTS_PER_MOTOR_REV = 0;  //NEED TO FIX DIS >:3
