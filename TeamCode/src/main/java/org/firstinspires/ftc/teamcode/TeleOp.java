@@ -130,14 +130,14 @@ public class TeleOp extends RobotParent {
                 claw.setPosition(claw_pos);
             }
             if (arm != null) {
-                /*
-                if (gamepad1.dpad_down) {
+
+                if (gamepad2.dpad_down) {
                     arm_pos -= 0.005;
                 }
-                else if (gamepad1.dpad_up) {
+                else if (gamepad2.dpad_up) {
                     arm_pos += 0.005;
                 }
-                */
+
                 if (gamepad1.left_bumper) {
                     arm_pos = ARM_UP;
                 }
