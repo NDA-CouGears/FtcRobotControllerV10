@@ -17,12 +17,19 @@ import com.acmerobotics.roadrunner.Vector2d;
 
 public class Autonomous extends RobotParent {
 
-    protected static final int RIGHT_DIRECTION = 1;
+    /*protected static final int RIGHT_DIRECTION = 1;
 
     protected static final int LEFT_DIRECTION = -1;
 
-    //private void turn()
-
+    private void mTurn (int direction, int inches){
+        if (direction == RIGHT_DIRECTION){ // slide to right
+            encoderDrive(0.4, inches , -inches, -inches, inches, 10.0);
+        }
+        if (direction == LEFT_DIRECTION){ // slide to left
+            encoderDrive(0.4, -inches , inches, inches, -inches, 10.0);
+        }
+    }
+    */
     @Override
     public void runOpMode() throws InterruptedException {
         initHardware();
@@ -32,9 +39,10 @@ public class Autonomous extends RobotParent {
         Action TrajectoryAction1 = drive.actionBuilder(drive.pose)
                 .lineToX(10)
                 .build();
-        //Action Turn90Action = drive.actionBuilder(drive.pose)
 
-
+        /*Action Turn90RightAction = drive.actionBuilder(drive.pose)
+                        .mTurn(1, 4);
+        */
 
         waitForStart();
 
