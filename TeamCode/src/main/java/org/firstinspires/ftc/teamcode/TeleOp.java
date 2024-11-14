@@ -38,175 +38,137 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.AngularVelocity;
-import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
-
-@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name="TeleOp", group="Drive")
+@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "TeleOp", group = "Drive")
 public class TeleOp extends RobotParent {
 
-    //this is copied from Bill's test code in SpeedTestOpMode
     public static double ARM_UP = 0.24;
     public static double ARM_DOWN = 0.615;
 
     private ElapsedTime runtime = new ElapsedTime();
 
-    DcMotor lift;
-    Servo claw;
-    Servo arm;
-    IMU imu;
+    private double signPreserveSquare(double value) {
+
+        if (value > 0) {
+            return value * value;
+        } else {
+            return -(value * value);
+        }
+    }
 
     @Override
     public void runOpMode() {
 
         initHardware();
 
-
-
-        //also copied
-            /////////////////////////////////////////////
-            // OpMode initialization
-            RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.UP;
-            RevHubOrientationOnRobot.UsbFacingDirection  usbDirection  = RevHubOrientationOnRobot.UsbFacingDirection.FORWARD;
-            RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(logoDirection, usbDirection);
-
-            // Now initialize the IMU with this mounting orientation
-            // This sample expects the IMU to be in a REV Hub and named "imu".
-            imu = hardwareMap.get(IMU.class, "imu");
-            imu.initialize(new IMU.Parameters(orientationOnRobot));
-            imu.resetYaw();
-
-            double claw_pos = 0;
-            claw = hardwareMap.get(Servo.class, "claw");
-
-            double arm_pos = ARM_UP;
-            arm = hardwareMap.get(Servo.class, "arm");
-            arm.setPosition(arm_pos);
-
-            /*
-            lift = hardwareMap.get(DcMotor.class, "lift");
-            int lift_hold_pos = 0;
-            boolean lift_holding = false;
-            if (lift != null) {
-                lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-                lift.setDirection(DcMotorSimple.Direction.REVERSE);
-            }
-
-             */
-
-            /////////////////////////////////////////////
-            // Initialization complete, wait for start
-            telemetry.addData(">", "Press Start to run tests.");
-
-
-
         waitForStart();
         runtime.reset();
-            //String runTime = runtime.toString();
+        String runTime = runtime.toString();
+
+        int lift_hold_pos = armMotor.getCurrentPosition();
+
+        arm.setPosition(ARM_UP);
+
+
 
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
-            mDrive();
-            arm();
-            //claw();
+            //mecanum drive
+            double max;
+            // POV Mode uses left joystick to go forward & strafe, and right joystick to rotate.
+            double axial = signPreserveSquare(gamepad1.left_stick_y * -0.9); // Remember, this is reversed!
+            double lateral = signPreserveSquare(gamepad1.left_stick_x * 0.7); // Counteract imperfect strafing
+            double yaw = (signPreserveSquare(gamepad1.right_stick_x * 1)) * 0.5;
 
-            //telemetry.addData("Status", "Test Run Time: " + runTime);
+            // Combine the joystick requests for each axis-motion to determine each wheel's power.
+            // Set up a variable for each drive wheel to save the power level for telemetry.
+            double leftFrontPower = axial + lateral + yaw;
+            double rightFrontPower = axial - lateral - yaw;
+            double leftBackPower = axial - lateral + yaw;
+            double rightBackPower = axial + lateral - yaw;
 
-            if (claw != null) {
-                if (gamepad1.dpad_left) {
-                    claw_pos -= 0.01;
-                }
-                if (gamepad1.dpad_right) {
-                    claw_pos += 0.01;
-                }
-                if (claw_pos > 1) {
-                    claw_pos = 1;
-                }
-                else if (claw_pos < 0) {
-                    claw_pos = 0;
-                }
-                claw.setPosition(claw_pos);
+            // Normalize the values so no wheel power exceeds 100%
+            // This ensures that the robot maintains the desired motion.
+            max = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));
+            max = Math.max(max, Math.abs(leftBackPower));
+            max = Math.max(max, Math.abs(rightBackPower));
+            if (max > 1.0) {
+                leftFrontPower /= max;
+                rightFrontPower /= max;
+                leftBackPower /= max;
+                rightBackPower /= max;
             }
-            if (arm != null) {
 
-                if (gamepad2.dpad_down) {
-                    arm_pos -= 0.005;
-                }
-                else if (gamepad2.dpad_up) {
-                    arm_pos += 0.005;
-                }
+            // Send calculated power to wheels
+            leftFrontDrive.setPower(leftFrontPower);
+            rightFrontDrive.setPower(rightFrontPower);
+            leftBackDrive.setPower(leftBackPower);
+            rightBackDrive.setPower(rightBackPower);
 
-                if (gamepad1.left_bumper) {
-                    arm_pos = ARM_UP;
-                }
-                else if (gamepad1.right_bumper) {
-                    arm_pos = ARM_DOWN;
-                }
-                if (arm_pos > 1) {
-                    arm_pos = 1;
-                }
-                else if (arm_pos < 0) {
-                    arm_pos = 0;
-                }
-                arm.setPosition(arm_pos);
+            int lfp = leftFrontDrive.getCurrentPosition();
+            int rfp = rightFrontDrive.getCurrentPosition();
+            int lbp = leftBackDrive.getCurrentPosition();
+            int rbp = rightBackDrive.getCurrentPosition();
+
+            //arm
+
+            if (gamepad2.a) {
+                lift_hold_pos = 2000;
             }
-            /*
-            if (lift != null) {
-                if (Math.abs(gamepad1.left_stick_y) < 0.01) {
-                    lift.setTargetPosition(lift_hold_pos);
-                    lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    lift.setPower(1);
+            else if (gamepad2.b) {
+                lift_hold_pos = 4700;
+            }
+            else {
+                double armMotorPower = -gamepad2.right_stick_y;
 
-                    while (opModeIsActive() && lift.isBusy() && (Math.abs(gamepad1.left_stick_y) < 0.01)) {
+                if (Math.abs(gamepad2.right_stick_y) < 0.01) {
+                    armMotor.setTargetPosition(lift_hold_pos);
+                    armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                    armMotor.setPower(1);
+
+                    while (opModeIsActive() && armMotor.isBusy() && (Math.abs(gamepad1.left_stick_y) < 0.01)) {
                         idle();
                     }
-
-                    lift.setPower(0);
+                    armMotor.setPower(0);
                 }
                 else {
-                    double lift_delta = gamepad1.left_stick_y;
-                    lift_hold_pos = lift.getCurrentPosition();
-                    lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                    lift.setPower(lift_delta);
+                    if ((touchSensor.isPressed()) && (armMotorPower < 0)) {
+                        armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                        armMotor.setPower(0);
+                    }
+                    else {
+                        armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                        lift_hold_pos = armMotor.getCurrentPosition();
+                        armMotor.setPower(armMotorPower);
+                    }
                 }
-            }
-            if (imu != null) {
-                if (gamepad1.y) {
-                    imu.resetYaw();
-                }
-            }
-            // Retrieve Rotational Angles and Velocities
-            YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
-            AngularVelocity angularVelocity = imu.getRobotAngularVelocity(AngleUnit.DEGREES);
 
-
-            if (lift != null)
-                telemetry.addData("Lift position", lift.getCurrentPosition());
-            if (claw != null)
-                telemetry.addData("Claw position", claw.getPosition());
-            if (arm != null)
-                telemetry.addData("Arm position", arm.getPosition());
-            if (imu != null) {
-                telemetry.addData("Yaw (Z)", "%.2f Deg. (Heading)", orientation.getYaw(AngleUnit.DEGREES));
-                telemetry.addData("Pitch (X)", "%.2f Deg.", orientation.getPitch(AngleUnit.DEGREES));
-                telemetry.addData("Roll (Y)", "%.2f Deg.\n", orientation.getRoll(AngleUnit.DEGREES));
-                telemetry.addData("Yaw (Z) velocity", "%.2f Deg/Sec", angularVelocity.zRotationRate);
-                telemetry.addData("Pitch (X) velocity", "%.2f Deg/Sec", angularVelocity.xRotationRate);
-                telemetry.addData("Roll (Y) velocity", "%.2f Deg/Sec", angularVelocity.yRotationRate);
+                telemetry.addData("Motor power: ", armMotor.getPower());
+                telemetry.addData("Motor position: ", armMotor.getCurrentPosition());
             }
-            */
+
+            //claw
+            //pressing right bumper opens claw, left bumper closes claw
+            if (gamepad2.right_bumper) {
+                claw.setPosition(ClawOpen);
+            } else if (gamepad2.left_bumper) {
+                claw.setPosition(ClawClosed);
+            }
+
+            //second arm (the one that picks up specimens)
+            if (gamepad1.dpad_down) {
+                arm.setPosition(ARM_DOWN);
+            } else if (gamepad1.dpad_up) {
+                arm.setPosition(ARM_UP);
+            }
 
 
             // Show the elapsed game time and wheel power
-            /*
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Encoders lf, rf, lb, rb", "%d, %d, %d, %d", lfp, rfp, lbp, rbp);
             telemetry.addData("Front left/Right", "%4.2f, %4.2f", leftFrontPower, rightFrontPower);
             telemetry.addData("Back  left/Right", "%4.2f, %4.2f", leftBackPower, rightBackPower);
             telemetry.update();
-            */
         }
     }
 }
+

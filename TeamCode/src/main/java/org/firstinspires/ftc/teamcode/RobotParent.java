@@ -23,6 +23,9 @@ public abstract class RobotParent extends LinearOpMode {
 
     final protected static double ClawClosed = 0.23;
     final protected static double ClawOpen = 0.92;
+
+    protected Servo secondArm = null; //this arm is the one that picks up specimens
+
     static final double DRIVE_GEAR_REDUCTION = 1.0;
     static final double WHEEL_DIAMETER_MM = 102;
     static final double COUNTS_PER_MOTOR_REV = 0;  //NEED TO FIX DIS >:3
