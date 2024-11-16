@@ -69,7 +69,6 @@ public class TeleOp extends RobotParent {
         arm.setPosition(ARM_UP);
 
 
-
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
 
@@ -109,34 +108,37 @@ public class TeleOp extends RobotParent {
             int rfp = rightFrontDrive.getCurrentPosition();
             int lbp = leftBackDrive.getCurrentPosition();
             int rbp = rightBackDrive.getCurrentPosition();
+            int current_lift_pos = armMotor.getCurrentPosition();
 
             //arm
 
             if (gamepad2.a) {
                 lift_hold_pos = 2000;
-            }
-            else if (gamepad2.b) {
+            } else if (gamepad2.b) {
                 lift_hold_pos = 4700;
-            }
-            else {
+            } else {
                 double armMotorPower = -gamepad2.right_stick_y;
 
                 if (Math.abs(gamepad2.right_stick_y) < 0.01) {
-                    armMotor.setTargetPosition(lift_hold_pos);
-                    armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                    armMotor.setPower(1);
+                    if (Math.abs(lift_hold_pos - current_lift_pos) > 50) {
 
-                    while (opModeIsActive() && armMotor.isBusy() && (Math.abs(gamepad1.left_stick_y) < 0.01)) {
-                        idle();
+                        armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                        armMotor.setTargetPosition(lift_hold_pos);
+                        armMotor.setPower(1);
+
+                        while (opModeIsActive() && armMotor.isBusy() && (Math.abs(gamepad2.left_stick_y) < 0.01)) {
+                            idle();
+                        }
+
+
+                        armMotor.setPower(0);
+
                     }
-                    armMotor.setPower(0);
-                }
-                else {
+                } else {
                     if ((touchSensor.isPressed()) && (armMotorPower < 0)) {
                         armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                         armMotor.setPower(0);
-                    }
-                    else {
+                    } else {
                         armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                         lift_hold_pos = armMotor.getCurrentPosition();
                         armMotor.setPower(armMotorPower);
@@ -156,11 +158,12 @@ public class TeleOp extends RobotParent {
             }
 
             //second arm (the one that picks up specimens)
-            if (gamepad1.dpad_down) {
+            if (gamepad2.dpad_down) {
                 arm.setPosition(ARM_DOWN);
-            } else if (gamepad1.dpad_up) {
+            } else if (gamepad2.dpad_up) {
                 arm.setPosition(ARM_UP);
             }
+
 
 
             // Show the elapsed game time and wheel power
