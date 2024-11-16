@@ -29,50 +29,29 @@ public class Autonomous extends RobotParent {
             encoderDrive(0.4, -inches , inches, inches, -inches, 10.0);
         }
     }
+    private void driveForward (int direction, int inches){
+        if (direction == RIGHT_DIRECTION){ // slide to right
+            encoderDrive(0.4, inches , -inches, -inches, inches, 10.0);
+        }
+        if (direction == LEFT_DIRECTION){ // slide to left
+            encoderDrive(0.4, -inches , inches, inches, -inches, 10.0);
+        }
+    }
 
+
+    private void turn (int direction, double degrees){
+        if (direction == RIGHT_DIRECTION) { // turn right in a certain degrees
+            encoderDrive(DRIVE_SPEED, degrees, -degrees, degrees, -degrees, 10.0);
+        }
+        if (direction == LEFT_DIRECTION) { // turn right in a certain degrees
+            encoderDrive(DRIVE_SPEED, -degrees, degrees, -degrees, degrees, 10.0);
+        }
+    }
     @Override
     public void runOpMode() throws InterruptedException {
         initHardware();
 
 
-
-
-
-        /*MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(0,0,0));
-
-        // Declare Trajectory as such
-        Action TrajectoryAction1 = drive.actionBuilder(drive.pose)
-                .lineToX(10)
-                .build();
-
-        waitForStart();
-
-        if (isStopRequested()) return;
-
-
-        Actions.runBlocking(
-                new SequentialAction(
-                        TrajectoryAction1, // Example of a drive action
-
-                        // This action and the following action do the same thing
-                        new Action() {
-                            @Override
-                            public boolean run(@NonNull TelemetryPacket telemetryPacket) {
-                                telemetry.addLine("Action!");
-                                telemetry.update();
-                                return false;
-                            }
-                        },
-                        // Only that this action uses a Lambda expression to reduce complexity
-                        (telemetryPacket) -> {
-                            telemetry.addLine("Action!");
-                            telemetry.update();
-                            return false; // Returning true causes the action to run again, returning false causes it to cease
-                        }
-
-                )
-        );
-*/
 
     }
 }

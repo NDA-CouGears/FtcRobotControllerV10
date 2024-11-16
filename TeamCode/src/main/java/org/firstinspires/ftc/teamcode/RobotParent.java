@@ -33,6 +33,8 @@ public abstract class RobotParent extends LinearOpMode {
     static final double WHEEL_DIAMETER_MM = 102;
     static final double COUNTS_PER_MOTOR_REV = 0;  //NEED TO FIX DIS >:3
     static final double COUNTS_PER_MM = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_MM * 3.14159);
+    static final double DRIVE_SPEED = 0.6;
+
 
     private double signPreserveSquare(double value) {
 
