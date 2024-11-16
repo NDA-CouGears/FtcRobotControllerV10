@@ -17,7 +17,7 @@ import com.acmerobotics.roadrunner.Vector2d;
 
 public class Autonomous extends RobotParent {
 
-    /*protected static final int RIGHT_DIRECTION = 1;
+    protected static final int RIGHT_DIRECTION = 1;
 
     protected static final int LEFT_DIRECTION = -1;
 
@@ -29,20 +29,21 @@ public class Autonomous extends RobotParent {
             encoderDrive(0.4, -inches , inches, inches, -inches, 10.0);
         }
     }
-    */
+
     @Override
     public void runOpMode() throws InterruptedException {
         initHardware();
-        MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(0,0,0));
+
+
+
+
+
+        /*MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(0,0,0));
 
         // Declare Trajectory as such
         Action TrajectoryAction1 = drive.actionBuilder(drive.pose)
                 .lineToX(10)
                 .build();
-
-        /*Action Turn90RightAction = drive.actionBuilder(drive.pose)
-                        .mTurn(1, 4);
-        */
 
         waitForStart();
 
@@ -71,7 +72,7 @@ public class Autonomous extends RobotParent {
 
                 )
         );
-
+*/
 
     }
 }
