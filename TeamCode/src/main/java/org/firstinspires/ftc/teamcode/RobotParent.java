@@ -34,9 +34,9 @@ public abstract class RobotParent extends LinearOpMode {
 
     static final double DRIVE_GEAR_REDUCTION = 1.0;
     static final double WHEEL_DIAMETER_MM = 102;
-    static final double COUNTS_PER_MOTOR_REV = 0;  //NEED TO FIX DIS >:3
+    static final double COUNTS_PER_MOTOR_REV = 483.3836858;  //NEED TO FIX DIS >:3
     static final double COUNTS_PER_MM = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_MM * 3.14159);
-    static final double DRIVE_SPEED = 0.6;
+    static final double DRIVE_SPEED = 0.2;
 
 
 
@@ -60,15 +60,14 @@ public abstract class RobotParent extends LinearOpMode {
         int newLeftBackTarget;
         int newRightFrontTarget;
         int newRightBackTarget;
-        speed = 0.25;
 
         // Ensure that the opmode is still active
         if (opModeIsActive()) {
             // Determine new target position, and pass to motor controller
-            newLeftFrontTarget = leftFrontDrive.getCurrentPosition() - (int) (25.4 * leftFrontInches * COUNTS_PER_MM);
-            newLeftBackTarget = leftBackDrive.getCurrentPosition() - (int) (25.4 * leftBackInches * COUNTS_PER_MM);
-            newRightFrontTarget = rightFrontDrive.getCurrentPosition() - (int) (25.4 * rightFrontInches * COUNTS_PER_MM);
-            newRightBackTarget = rightBackDrive.getCurrentPosition() - (int) (25.4 * rightBackInches * COUNTS_PER_MM);
+            newLeftFrontTarget = leftFrontDrive.getCurrentPosition() + (int) (25.4 * leftFrontInches * COUNTS_PER_MM);
+            newLeftBackTarget = leftBackDrive.getCurrentPosition() + (int) (25.4 * leftBackInches * COUNTS_PER_MM);
+            newRightFrontTarget = rightFrontDrive.getCurrentPosition() + (int) (25.4 * rightFrontInches * COUNTS_PER_MM);
+            newRightBackTarget = rightBackDrive.getCurrentPosition() + (int) (25.4 * rightBackInches * COUNTS_PER_MM);
             leftFrontDrive.setTargetPosition(newLeftFrontTarget);
             leftBackDrive.setTargetPosition(newLeftBackTarget);
             rightFrontDrive.setTargetPosition(newRightFrontTarget);

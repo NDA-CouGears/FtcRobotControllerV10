@@ -61,7 +61,11 @@ public class AutoMode extends RobotParent {
     @Override
     public void runOpMode() throws InterruptedException {
         initHardware();
+        waitForStart();
 
+        if( opModeIsActive()) {
+            encoderDrive(DRIVE_SPEED, 10, 10, 10, 10, 10.0);
+        }
 
 
     }
