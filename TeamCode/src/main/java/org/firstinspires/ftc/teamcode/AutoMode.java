@@ -30,6 +30,19 @@ public class AutoMode extends RobotParent {
     private void turnRight (int direction, int inches) {
         encoderDrive(0.4, inches , -inches, -inches, inches, 10.0);
     }
+    //@Juliet opens/closes claw and moves elbow arm up/down
+    private void closeClaw(){
+        claw.setPosition(ClawClosed);
+    }
+    private void openClaw(){
+        claw.setPosition(ClawOpen);
+    }
+    private void armDown(){
+        arm.setPosition(ARM_DOWN);
+    }
+    private void armUp(){
+        arm.setPosition(ARM_UP);
+    }
 
     @Override
     public void runOpMode() throws InterruptedException {

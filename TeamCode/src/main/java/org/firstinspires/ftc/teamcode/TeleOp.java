@@ -41,9 +41,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "TeleOp", group = "Drive")
 public class TeleOp extends RobotParent {
 
-    public static double ARM_UP = 0.24;
-    public static double ARM_DOWN = 0.615;
-
     private ElapsedTime runtime = new ElapsedTime();
 
     private double signPreserveSquare(double value) {
