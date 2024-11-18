@@ -122,8 +122,8 @@ public class TeleOp extends RobotParent {
                 if (Math.abs(gamepad2.right_stick_y) < 0.01) {
                     if (Math.abs(lift_hold_pos - current_lift_pos) > 50) {
 
-                        armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                         armMotor.setTargetPosition(lift_hold_pos);
+                        armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                         armMotor.setPower(1);
 
                         while (opModeIsActive() && armMotor.isBusy() && (Math.abs(gamepad2.left_stick_y) < 0.01)) {
