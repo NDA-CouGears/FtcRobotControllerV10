@@ -1,8 +1,10 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.lynx.LynxModule;
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -38,7 +40,20 @@ public abstract class RobotParent extends LinearOpMode {
     static final double COUNTS_PER_MM = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_MM * 3.14159);
     static final double DRIVE_SPEED = 0.2;
 
+    public double  targetHeading = 0;
+    public double  headingError  = 0;
+    public double  turnSpeed     = 0;
 
+    public IMU imu = null;// Control/Expansion Hub IMU
+
+    static final double P_DRIVE_GAIN = 0.03;// Larger is more responsive, but also less stable.
+    static final double P_TURN_GAIN  = 0.02;// Larger is more responsive, but also less stable.
+
+    static final double HEADING_THRESHOLD = 1.0 ;// How close must the heading get to the target before moving to next step.
+
+    public double  driveSpeed    = 0;
+    public double  leftSpeed     = 0;
+    public double  rightSpeed    = 0;
 
     private double signPreserveSquare(double value) {
 
@@ -256,6 +271,13 @@ public abstract class RobotParent extends LinearOpMode {
         for (LynxModule module : allHubs) {
             module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
+
+        RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.UP;
+        RevHubOrientationOnRobot.UsbFacingDirection  usbDirection  = RevHubOrientationOnRobot.UsbFacingDirection.FORWARD;
+        RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(logoDirection, usbDirection);
+
+        imu = hardwareMap.get(IMU.class, "imu");
+        imu.initialize(new IMU.Parameters(orientationOnRobot));
 
         // Wait for the game to start (driver presses START)
         telemetry.addData("Status", "Initialized");
