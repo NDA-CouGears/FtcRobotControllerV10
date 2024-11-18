@@ -36,6 +36,7 @@ public abstract class RobotParent extends LinearOpMode {
     static final double DRIVE_SPEED = 0.6;
 
 
+
     private double signPreserveSquare(double value) {
 
         if (value > 0) {
