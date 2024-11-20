@@ -95,6 +95,10 @@ public class AutoMode extends RobotParent {
         rightBackDrive.setPower(rightBackPower);
     }
     public void turnToHeading(double maxTurnSpeed, double heading) {
+        leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         // Run getSteeringCorrection() once to pre-calculate the current error
         getSteeringCorrection(heading, P_TURN_GAIN);
