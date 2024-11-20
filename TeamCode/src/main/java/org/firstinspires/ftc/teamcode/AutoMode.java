@@ -62,7 +62,7 @@ public class AutoMode extends RobotParent {
         // Determine the heading current error
         headingError = targetHeading - getHeading();
 
-        // Normalize the error to be within +/- 180 degrees
+        // Normalize the error to be within +/- 180 degrees to avoid wasting time with overly long turns
         while (headingError > 180)  headingError -= 360;
         while (headingError <= -180) headingError += 360;
 
@@ -97,17 +97,21 @@ public class AutoMode extends RobotParent {
     public void turnToHeading(double maxTurnSpeed, double heading) {
 
         // Run getSteeringCorrection() once to pre-calculate the current error
-        getSteeringCorrection(heading, P_DRIVE_GAIN);
+        getSteeringCorrection(heading, P_TURN_GAIN);
 
         // keep looping while we are still active, and not on heading.
         while (opModeIsActive() && (Math.abs(headingError) > HEADING_THRESHOLD)) {
-            //GETIING STUCK IN LOOP B/C NOT REACHING ANGLE BC SPEED TOO SLOW
+            //GETtING STUCK IN LOOP B/C NOT REACHING ANGLE BC SPEED TOO SLOW
             // Determine required steering to keep on heading
             turnSpeed = getSteeringCorrection(heading, P_TURN_GAIN);
 
             // Clip the speed to the maximum permitted value.
-            turnSpeed = Range.clip(turnSpeed, -maxTurnSpeed, maxTurnSpeed);
-
+            if( turnSpeed < 0 ) {
+                turnSpeed = Range.clip(turnSpeed, -maxTurnSpeed, -0.1);
+            }
+            else{
+                turnSpeed = Range.clip(turnSpeed,0.1, maxTurnSpeed);
+            }
             // Pivot in place by applying the turning correction
             moveRobot(0, 0, turnSpeed);
             updateTelemetry();
@@ -115,6 +119,63 @@ public class AutoMode extends RobotParent {
 
         // Stop all motion;
         moveRobot(0, 0, 0);
+    }
+
+    public void driveStraight(double maxDriveSpeed,
+                              double distance,
+                              double heading) {
+
+        // Ensure that the OpMode is still active
+        if (opModeIsActive()) {
+            // Determine new target position, and pass to motor controller
+            int moveCounts = (int)(distance * COUNTS_PER_INCH);
+            int newLeftFrontTarget = leftFrontDrive.getCurrentPosition() + moveCounts;
+            int newLeftBackTarget = leftBackDrive.getCurrentPosition() + moveCounts;
+            int newRightFrontTarget = rightFrontDrive.getCurrentPosition() + moveCounts;
+            int newRightBackTarget = rightBackDrive.getCurrentPosition() + moveCounts;
+            leftFrontDrive.setTargetPosition(newLeftFrontTarget);
+            leftBackDrive.setTargetPosition(newLeftBackTarget);
+            rightFrontDrive.setTargetPosition(newRightFrontTarget);
+            rightBackDrive.setTargetPosition(newRightBackTarget);
+
+            leftFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            leftBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            rightFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            rightBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+
+            // Set the required driving speed  (must be positive for RUN_TO_POSITION)
+            // Start driving straight, and then enter the control loop
+            maxDriveSpeed = Math.abs(maxDriveSpeed);
+            moveRobot(maxDriveSpeed, 0, 0);
+
+            // keep looping while we are still active, and BOTH motors are running.
+            while (opModeIsActive() &&
+                    (leftFrontDrive.isBusy() && leftBackDrive.isBusy() && rightFrontDrive.isBusy() && rightBackDrive.isBusy())) {
+
+                // Determine required steering to keep on heading
+                turnSpeed = getSteeringCorrection(heading, P_DRIVE_GAIN);
+
+                // if driving in reverse, the motor correction also needs to be reversed
+                if (distance < 0)
+                    turnSpeed *= -1.0;
+
+                // Apply the turning correction to the current driving speed.
+                moveRobot(maxDriveSpeed, 0, turnSpeed);
+
+                // Display drive status for the driver.
+                updateTelemetry();
+            }
+
+            // Stop all motion & Turn off RUN_TO_POSITION
+            moveRobot(0, 0, 0);
+
+            leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            leftBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            rightBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        }
     }
     public void updateTelemetry(){
         YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
@@ -129,16 +190,7 @@ public class AutoMode extends RobotParent {
         telemetry.update();
     }
 
-    /* @Tess. These are the 90 turning methods from last year, I will probably have to change
-    the encoder drive values later to account for the new wheels, so this is commented out for now.
 
-    protected void turnLeft90(){
-        encoderDrive(DRIVE_SPEED,   -17.5, 17.5, -17.5, 17.5,4.0);
-    }
-    protected void turnRight90(){
-        encoderDrive(DRIVE_SPEED,   17.5, -17.5, 17.5, -17.5,4.0);
-    }
-    */
     @Override
     public void runOpMode() throws InterruptedException {
         initHardware();
@@ -146,7 +198,11 @@ public class AutoMode extends RobotParent {
         imu.resetYaw();
 
         if(opModeIsActive()) {
+            //have the robot move at a higher speed first, then run a second method to correct position if overshot
+            turnToHeading(1.0, -75);
             turnToHeading(0.2, -90);
+            driveStraight(0.1, 50, -90);
+            turnToHeading(0.2,-90);
         }
         while (opModeIsActive()){
             telemetry.addLine("after turn");

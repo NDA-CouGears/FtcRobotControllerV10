@@ -35,9 +35,9 @@ public abstract class RobotParent extends LinearOpMode {
     public static double ARM_DOWN = 0.615;
 
     static final double DRIVE_GEAR_REDUCTION = 1.0;
-    static final double WHEEL_DIAMETER_MM = 102;
+    static final double WHEEL_DIAMETER_INCHES = 102/25.4;
     static final double COUNTS_PER_MOTOR_REV = 483.3836858;  //NEED TO FIX DIS >:3
-    static final double COUNTS_PER_MM = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_MM * 3.14159);
+    static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * 3.14159);
     static final double DRIVE_SPEED = 0.2;
 
     public double  targetHeading = 0;
@@ -51,9 +51,6 @@ public abstract class RobotParent extends LinearOpMode {
 
     static final double HEADING_THRESHOLD = 1.0 ;// How close must the heading get to the target before moving to next step.
 
-    public double  driveSpeed    = 0;
-    public double  leftSpeed     = 0;
-    public double  rightSpeed    = 0;
 
     private double signPreserveSquare(double value) {
 
@@ -79,10 +76,10 @@ public abstract class RobotParent extends LinearOpMode {
         // Ensure that the opmode is still active
         if (opModeIsActive()) {
             // Determine new target position, and pass to motor controller
-            newLeftFrontTarget = leftFrontDrive.getCurrentPosition() + (int) (25.4 * leftFrontInches * COUNTS_PER_MM);
-            newLeftBackTarget = leftBackDrive.getCurrentPosition() + (int) (25.4 * leftBackInches * COUNTS_PER_MM);
-            newRightFrontTarget = rightFrontDrive.getCurrentPosition() + (int) (25.4 * rightFrontInches * COUNTS_PER_MM);
-            newRightBackTarget = rightBackDrive.getCurrentPosition() + (int) (25.4 * rightBackInches * COUNTS_PER_MM);
+            newLeftFrontTarget = leftFrontDrive.getCurrentPosition() + (int) (leftFrontInches * COUNTS_PER_INCH);
+            newLeftBackTarget = leftBackDrive.getCurrentPosition() + (int) (leftBackInches * COUNTS_PER_INCH);
+            newRightFrontTarget = rightFrontDrive.getCurrentPosition() + (int) (rightFrontInches * COUNTS_PER_INCH);
+            newRightBackTarget = rightBackDrive.getCurrentPosition() + (int) (rightBackInches * COUNTS_PER_INCH);
             leftFrontDrive.setTargetPosition(newLeftFrontTarget);
             leftBackDrive.setTargetPosition(newLeftBackTarget);
             rightFrontDrive.setTargetPosition(newRightFrontTarget);
