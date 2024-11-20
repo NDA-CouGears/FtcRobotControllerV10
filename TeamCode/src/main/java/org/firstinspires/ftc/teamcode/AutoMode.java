@@ -201,8 +201,7 @@ public class AutoMode extends RobotParent {
             //have the robot move at a higher speed first, then run a second method to correct position if overshot
             turnToHeading(1.0, -75);
             turnToHeading(0.2, -90);
-            driveStraight(0.1, 50, -90);
-            turnToHeading(0.2,-90);
+            driveStraight(0.2, 30, -90);
         }
         while (opModeIsActive()){
             telemetry.addLine("after turn");
