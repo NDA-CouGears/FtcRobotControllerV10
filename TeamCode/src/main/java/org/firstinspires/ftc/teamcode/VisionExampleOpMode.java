@@ -3,141 +3,147 @@ package org.firstinspires.ftc.teamcode;
 import android.util.Size;
 
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.util.SortOrder;
 
+import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.CameraName;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.vision.VisionPortal;
+import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
+import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import org.firstinspires.ftc.vision.opencv.ColorBlobLocatorProcessor;
 import org.firstinspires.ftc.vision.opencv.ColorRange;
 import org.firstinspires.ftc.vision.opencv.ImageRegion;
 import org.opencv.core.RotatedRect;
 
 import java.util.List;
+import java.util.Locale;
 
-@TeleOp(name="Vision Test", group="Tests")
-public class VisionExampleOpMode extends LinearOpMode {
-    @Override
-    public void runOpMode()
-    {
-        /* Build a "Color Locator" vision processor based on the ColorBlobLocatorProcessor class.
-         * - Specify the color range you are looking for.  You can use a predefined color, or create you own color range
-         *     .setTargetColorRange(ColorRange.BLUE)                      // use a predefined color match
-         *       Available predefined colors are: RED, BLUE YELLOW GREEN
-         *     .setTargetColorRange(new ColorRange(ColorSpace.YCrCb,      // or define your own color match
-         *                                           new Scalar( 32, 176,  0),
-         *                                           new Scalar(255, 255, 132)))
-         *
-         * - Focus the color locator by defining a RegionOfInterest (ROI) which you want to search.
-         *     This can be the entire frame, or a sub-region defined using:
-         *     1) standard image coordinates or 2) a normalized +/- 1.0 coordinate system.
-         *     Use one form of the ImageRegion class to define the ROI.
-         *         ImageRegion.entireFrame()
-         *         ImageRegion.asImageCoordinates(50, 50,  150, 150)  100x100 pixel square near the upper left corner
-         *         ImageRegion.asUnityCenterCoordinates(-0.5, 0.5, 0.5, -0.5)  50% width/height square centered on screen
-         *
-         * - Define which contours are included.
-         *     You can get ALL the contours, or you can skip any contours that are completely inside another contour.
-         *        .setContourMode(ColorBlobLocatorProcessor.ContourMode.ALL_FLATTENED_HIERARCHY)  // return all contours
-         *        .setContourMode(ColorBlobLocatorProcessor.ContourMode.EXTERNAL_ONLY)            // exclude contours inside other contours
-         *        note: EXTERNAL_ONLY helps to avoid bright reflection spots from breaking up areas of solid color.
-         *
-         * - turn the display of contours ON or OFF.  Turning this on helps debugging but takes up valuable CPU time.
-         *        .setDrawContours(true)
-         *
-         * - include any pre-processing of the image or mask before looking for Blobs.
-         *     There are some extra processing you can include to improve the formation of blobs.  Using these features requires
-         *     an understanding of how they may effect the final blobs.  The "pixels" argument sets the NxN kernel size.
-         *        .setBlurSize(int pixels)    Blurring an image helps to provide a smooth color transition between objects, and smoother contours.
-         *                                    The higher the number of pixels, the more blurred the image becomes.
-         *                                    Note:  Even "pixels" values will be incremented to satisfy the "odd number" requirement.
-         *                                    Blurring too much may hide smaller features.  A "pixels" size of 5 is good for a 320x240 image.
-         *        .setErodeSize(int pixels)   Erosion removes floating pixels and thin lines so that only substantive objects remain.
-         *                                    Erosion can grow holes inside regions, and also shrink objects.
-         *                                    "pixels" in the range of 2-4 are suitable for low res images.
-         *        .setDilateSize(int pixels)  Dilation makes objects more visible by filling in small holes, making lines appear thicker,
-         *                                    and making filled shapes appear larger. Dilation is useful for joining broken parts of an
-         *                                    object, such as when removing noise from an image.
-         *                                    "pixels" in the range of 2-4 are suitable for low res images.
-         */
-        ColorBlobLocatorProcessor colorLocator = new ColorBlobLocatorProcessor.Builder()
+@Autonomous( name = "Vision", group = "Examples")
+public class VisionExampleOpMode extends AutoMode {
+    private WebcamName webcam1, webcam2;
+    VisionPortal portal;
+    AprilTagProcessor tagProcessor;
+    ColorBlobLocatorProcessor yellowLocator;
+    ColorBlobLocatorProcessor redLocator;
+    ColorBlobLocatorProcessor blueLocator;
+
+    public void initVision() {
+        blueLocator = new ColorBlobLocatorProcessor.Builder()
                 .setTargetColorRange(ColorRange.BLUE)         // use a predefined color match
                 .setContourMode(ColorBlobLocatorProcessor.ContourMode.EXTERNAL_ONLY)    // exclude blobs inside blobs
-                .setRoi(ImageRegion.asUnityCenterCoordinates(-1.0, 1.0, 1.0, -1.0))  // search central 1/4 of camera view
-
-                .setDrawContours(true)                        // Show contours on the Stream Preview
+                .setRoi(ImageRegion.entireFrame())
+                .setDrawContours(true)                        // Turn this off for competitions to save cpu
                 .setBlurSize(5)                               // Smooth the transitions between different colors in image
                 .build();
 
-        /*
-         * Build a vision portal to run the Color Locator process.
-         *
-         *  - Add the colorLocator process created above.
-         *  - Set the desired video resolution.
-         *      Since a high resolution will not improve this process, choose a lower resolution that is
-         *      supported by your camera.  This will improve overall performance and reduce latency.
-         *  - Choose your video source.  This may be
-         *      .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))  .....   for a webcam
-         *  or
-         *      .setCamera(BuiltinCameraDirection.BACK)    ... for a Phone Camera
-         */
-        VisionPortal portal = new VisionPortal.Builder()
-                .addProcessor(colorLocator)
-                .setCameraResolution(new Size(320, 240))
-                .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))
+        redLocator = new ColorBlobLocatorProcessor.Builder()
+                .setTargetColorRange(ColorRange.RED)         // use a predefined color match
+                .setContourMode(ColorBlobLocatorProcessor.ContourMode.EXTERNAL_ONLY)    // exclude blobs inside blobs
+                .setRoi(ImageRegion.entireFrame())
+                .setDrawContours(true)                        // Turn this off for competitions to save cpu
+                .setBlurSize(5)                               // Smooth the transitions between different colors in image
                 .build();
 
+        yellowLocator = new ColorBlobLocatorProcessor.Builder()
+                .setTargetColorRange(ColorRange.YELLOW)         // use a predefined color match
+                .setContourMode(ColorBlobLocatorProcessor.ContourMode.EXTERNAL_ONLY)    // exclude blobs inside blobs
+                .setRoi(ImageRegion.entireFrame())
+                .setDrawContours(true)                        // Turn this off for competitions to save cpu
+                .setBlurSize(5)                               // Smooth the transitions between different colors in image
+                .build();
 
-        telemetry.setMsTransmissionInterval(50);   // Speed up telemetry updates, Just use for debugging.
-        telemetry.setDisplayFormat(Telemetry.DisplayFormat.MONOSPACE);
+        // Create the AprilTag processor by using a builder.
+        tagProcessor = new AprilTagProcessor.Builder().build();
+        // We are only using large april tags this year so we can trade performance (higher
+        // decimation) for accuracy from range. With the smaller april tags we would lower this.
+        tagProcessor.setDecimation(3);
 
-        // WARNING:  To be able to view the stream preview on the Driver Station, this code runs in INIT mode.
-        while (opModeIsActive() || opModeInInit())
-        {
+        webcam1 = hardwareMap.get(WebcamName.class, "Webcam 1");
+        webcam2 = hardwareMap.get(WebcamName.class, "Webcam 2");
+        CameraName switchableCamera = ClassFactory.getInstance()
+                .getCameraManager().nameForSwitchableCamera(webcam1, webcam2);
+
+        portal = new VisionPortal.Builder()
+                .setCamera(switchableCamera)
+                .addProcessors(blueLocator, redLocator, yellowLocator, tagProcessor)
+                .setCameraResolution(new Size(640, 480))
+                .build();
+
+    }
+
+    @Override
+    public void runOpMode() {
+        initHardware();
+        initVision();
+
+        //waitForStart();
+
+        while (opModeIsActive() || opModeInInit()) {
             telemetry.addData("preview on/off", "... Camera Stream\n");
 
-            // Read the current list
-            List<ColorBlobLocatorProcessor.Blob> blobs = colorLocator.getBlobs();
+            // Turn stream on or off
+            if (gamepad1.y && (portal.getCameraState() == VisionPortal.CameraState.STREAMING)) {
+                portal.stopStreaming();
+            } else if (gamepad1.x && (portal.getCameraState() != VisionPortal.CameraState.STREAMING)) {
+                portal.resumeStreaming();
+            }
 
-            /*
-             * The list of Blobs can be filtered to remove unwanted Blobs.
-             *   Note:  All contours will be still displayed on the Stream Preview, but only those that satisfy the filter
-             *          conditions will remain in the current list of "blobs".  Multiple filters may be used.
-             *
-             * Use any of the following filters.
-             *
-             * ColorBlobLocatorProcessor.Util.filterByArea(minArea, maxArea, blobs);
-             *   A Blob's area is the number of pixels contained within the Contour.  Filter out any that are too big or small.
-             *   Start with a large range and then refine the range based on the likely size of the desired object in the viewfinder.
-             *
-             * ColorBlobLocatorProcessor.Util.filterByDensity(minDensity, maxDensity, blobs);
-             *   A blob's density is an indication of how "full" the contour is.
-             *   If you put a rubber band around the contour you would get the "Convex Hull" of the contour.
-             *   The density is the ratio of Contour-area to Convex Hull-area.
-             *
-             * ColorBlobLocatorProcessor.Util.filterByAspectRatio(minAspect, maxAspect, blobs);
-             *   A blob's Aspect ratio is the ratio of boxFit long side to short side.
-             *   A perfect Square has an aspect ratio of 1.  All others are > 1
-             */
-            ColorBlobLocatorProcessor.Util.filterByArea(50, 20000, blobs);  // filter out very small blobs.
+            // Don't bother looking if the portal is not processing video
+            if (portal.getCameraState() != VisionPortal.CameraState.STREAMING) {
+                continue;
+            }
 
-            /*
-             * The list of Blobs can be sorted using the same Blob attributes as listed above.
-             * No more than one sort call should be made.  Sorting can use ascending or descending order.
-             *     ColorBlobLocatorProcessor.Util.sortByArea(SortOrder.DESCENDING, blobs);      // Default
-             *     ColorBlobLocatorProcessor.Util.sortByDensity(SortOrder.DESCENDING, blobs);
-             *     ColorBlobLocatorProcessor.Util.sortByAspectRatio(SortOrder.DESCENDING, blobs);
-             */
+            // Switch between cameras if requested
+            if (gamepad1.a && (portal.getActiveCamera() == webcam2)) {
+                portal.setActiveCamera(webcam1);
+            } else if (gamepad1.b && (portal.getActiveCamera() == webcam1)) {
+                portal.setActiveCamera(webcam2);
+            }
 
-            telemetry.addLine(" Area Density Aspect  Center");
+            List<ColorBlobLocatorProcessor.Blob> blueBlobs = blueLocator.getBlobs();
+            List<ColorBlobLocatorProcessor.Blob> redBlobs = redLocator.getBlobs();
+            List<ColorBlobLocatorProcessor.Blob> yellowBlobs = yellowLocator.getBlobs();
+
+            ColorBlobLocatorProcessor.Util.filterByArea(50, 20000, blueBlobs);  // filter out very small blobs.
+            ColorBlobLocatorProcessor.Util.filterByArea(50, 20000, redBlobs);  // filter out very small blobs.
+            ColorBlobLocatorProcessor.Util.filterByArea(50, 20000, yellowBlobs);  // filter out very small blobs.
+            //ColorBlobLocatorProcessor.Util.sortByArea(SortOrder.DESCENDING, blobs);      // Default so no need to call
+
+            telemetry.addLine("Found id, range, bearing, yaw");
+            List<AprilTagDetection> currentDetections = tagProcessor.getDetections();
+            for (AprilTagDetection detection : currentDetections) {
+                // Look to see if we have size info on this tag.
+                if (detection.metadata != null) {
+                    telemetry.addLine(String.format(Locale.US,"%d (%s), %5.1f, %3.0f, %3.0f",
+                            detection.id, detection.metadata.name, detection.ftcPose.range, detection.ftcPose.bearing, detection.ftcPose.yaw));
+                }
+            }
+
+            telemetry.addLine("(x,y) Area Density Aspect");
 
             // Display the size (area) and center location for each Blob.
-            for(ColorBlobLocatorProcessor.Blob b : blobs)
-            {
+            for (ColorBlobLocatorProcessor.Blob b : blueBlobs) {
                 RotatedRect boxFit = b.getBoxFit();
-                telemetry.addLine(String.format("%5d  %4.2f   %5.2f  (%3d,%3d)",
-                        b.getContourArea(), b.getDensity(), b.getAspectRatio(), (int) boxFit.center.x, (int) boxFit.center.y));
+                telemetry.addLine(String.format(Locale.US,
+                        "Blue: (%3d,%3d) %5d  %4.2f   %5.2f",
+                        (int) boxFit.center.x, (int) boxFit.center.y, b.getContourArea(), b.getDensity(), b.getAspectRatio()));
+            }
+            for (ColorBlobLocatorProcessor.Blob b : redBlobs) {
+                RotatedRect boxFit = b.getBoxFit();
+                telemetry.addLine(String.format(Locale.US,
+                        "Red: (%3d,%3d) %5d  %4.2f   %5.2f",
+                        (int) boxFit.center.x, (int) boxFit.center.y, b.getContourArea(), b.getDensity(), b.getAspectRatio()));
+            }
+            for (ColorBlobLocatorProcessor.Blob b : yellowBlobs) {
+                RotatedRect boxFit = b.getBoxFit();
+                telemetry.addLine(String.format(Locale.US,
+                        "Yellow: (%3d,%3d) %5d  %4.2f   %5.2f",
+                        (int) boxFit.center.x, (int) boxFit.center.y, b.getContourArea(), b.getDensity(), b.getAspectRatio()));
             }
 
             telemetry.update();
