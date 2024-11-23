@@ -23,22 +23,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 public class AutoMode extends RobotParent {
 
 
-    /* @Tess. These are all the methods for driving, slide just means to go sideways.
-    For doing any forward movement, just init a new encoderDrive and manually put in the
-    the inches you want to travel. ( DRIVE_SPEED and timeout are the same :3 )
-    */
-    private void slideLeft (int direction, int inches){
-        encoderDrive(DRIVE_SPEED, -inches , inches, inches, -inches, 10.0);
-    }
-    private void slideRight (int direction, int inches){
-        encoderDrive(DRIVE_SPEED, inches , -inches, -inches, inches, 10.0);
-    }
-    private void turnLeft (int direction, int inches){
-        encoderDrive(DRIVE_SPEED, -inches , inches, inches, -inches, 10.0);
-    }
-    private void turnRight (int direction, int inches) {
-        encoderDrive(DRIVE_SPEED, inches , -inches, -inches, inches, 10.0);
-    }
+
     //@Juliet opens/closes claw and moves elbow arm up/down
     private void closeClaw(){
         claw.setPosition(ClawClosed);
@@ -69,6 +54,7 @@ public class AutoMode extends RobotParent {
         // Multiply the error by the gain to determine the required steering correction/  Limit the result to +/- 1.0
         return Range.clip(headingError * proportionalGain, -1, 1);
     }
+    //moveRobot moves the robot (shocking i know). used inside the driveForward and slide methods.
     public void moveRobot(double x, double y, double yaw) {
         // Calculate wheel powers.
         double leftFrontPower    =  x -y -yaw;
@@ -105,7 +91,6 @@ public class AutoMode extends RobotParent {
 
         // keep looping while we are still active, and not on heading.
         while (opModeIsActive() && (Math.abs(headingError) > HEADING_THRESHOLD)) {
-            //GETtING STUCK IN LOOP B/C NOT REACHING ANGLE BC SPEED TOO SLOW
             // Determine required steering to keep on heading
             turnSpeed = getSteeringCorrection(heading, P_TURN_GAIN);
 
