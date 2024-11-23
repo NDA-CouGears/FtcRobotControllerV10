@@ -170,6 +170,7 @@ public class AutoMode extends RobotParent {
         int newLeftBackTarget = leftBackDrive.getCurrentPosition() + moveCounts;
         int newRightFrontTarget = rightFrontDrive.getCurrentPosition() + moveCounts;
         int newRightBackTarget = rightBackDrive.getCurrentPosition() - moveCounts;
+
         leftFrontDrive.setTargetPosition(newLeftFrontTarget);
         leftBackDrive.setTargetPosition(newLeftBackTarget);
         rightFrontDrive.setTargetPosition(newRightFrontTarget);
@@ -208,6 +209,10 @@ public class AutoMode extends RobotParent {
         telemetry.addData("Pitch (X) velocity", "%.2f Deg/Sec", angularVelocity.xRotationRate);
         telemetry.addData("Roll (Y) velocity", "%.2f Deg/Sec", angularVelocity.yRotationRate);
         telemetry.addData("Status", "Initialized2");
+        telemetry.addData("Left Front Motor", "%d, %d, %.2f", leftFrontDrive.getCurrentPosition(), leftFrontDrive.getTargetPosition(), leftFrontDrive.getPower());
+        telemetry.addData("Right Front Motor", "%d, %d, %.2f", rightFrontDrive.getCurrentPosition(), rightFrontDrive.getTargetPosition(), rightFrontDrive.getPower());
+        telemetry.addData("Left Back Motor", "%d, %d, %.2f", leftBackDrive.getCurrentPosition(), leftBackDrive.getTargetPosition(), leftBackDrive.getPower());
+        telemetry.addData("Right Back Motor", "%d, %d, %.2f", rightBackDrive.getCurrentPosition(), rightBackDrive.getTargetPosition(), rightBackDrive.getPower());
         telemetry.update();
     }
 
@@ -221,15 +226,14 @@ public class AutoMode extends RobotParent {
         if(opModeIsActive()) {
             //have the robot move at a higher speed first, then run a second method to correct position if overshot
             //slide(0.5, 20, 0);
-
             // Bulk cache is causing the first call to isBusty to always return false so call it here to
             // clear it an ensure it works when we need it
             leftFrontDrive.isBusy();
 
-            slide(0.5, -40, 0);
             //turnToHeading(1.0, -75);
             //turnToHeading(0.2, -90);
-            //driveStraight(0.2, 30, -90);
+            //driveStraight(0.2, 30, 0);
+            slide(0.5, -20, 0);
         }
         while (opModeIsActive()){
             telemetry.addLine("after turn");
