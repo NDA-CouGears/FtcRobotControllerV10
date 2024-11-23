@@ -159,12 +159,43 @@ public class AutoMode extends RobotParent {
             // Stop all motion & Turn off RUN_TO_POSITION
             moveRobot(0, 0, 0);
 
-            leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            leftBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            rightBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
         }
+    }
+    public void slide(double maxDriveSpeed,
+                              double distance,
+                              double heading){
+
+        int moveCounts = (int)(distance * SLIDE_COUNTS_PER_INCH);
+        int newLeftFrontTarget = leftFrontDrive.getCurrentPosition() - moveCounts;
+        int newLeftBackTarget = leftBackDrive.getCurrentPosition() + moveCounts;
+        int newRightFrontTarget = rightFrontDrive.getCurrentPosition() + moveCounts;
+        int newRightBackTarget = rightBackDrive.getCurrentPosition() - moveCounts;
+        leftFrontDrive.setTargetPosition(newLeftFrontTarget);
+        leftBackDrive.setTargetPosition(newLeftBackTarget);
+        rightFrontDrive.setTargetPosition(newRightFrontTarget);
+        rightBackDrive.setTargetPosition(newRightBackTarget);
+
+        leftFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        leftBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightFrontDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        rightBackDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        // Set the required driving speed  (must be positive for RUN_TO_POSITION)
+        // Start driving straight, and then enter the control loop
+        maxDriveSpeed = Math.abs(maxDriveSpeed);
+        moveRobot(maxDriveSpeed, 0, 0);
+
+        // keep looping while we are still active, and BOTH motors are running.
+        while (opModeIsActive() &&
+                (leftFrontDrive.isBusy() && leftBackDrive.isBusy() && rightFrontDrive.isBusy() && rightBackDrive.isBusy())) {
+
+            // Display drive status for the driver.
+            updateTelemetry();
+        }
+
+        // Stop all motion & Turn off RUN_TO_POSITION
+        moveRobot(0, 0, 0);
+
     }
     public void updateTelemetry(){
         YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
@@ -188,9 +219,11 @@ public class AutoMode extends RobotParent {
 
         if(opModeIsActive()) {
             //have the robot move at a higher speed first, then run a second method to correct position if overshot
-            turnToHeading(1.0, -75);
-            turnToHeading(0.2, -90);
-            driveStraight(0.2, 30, -90);
+            //slide(0.5, 20, 0);
+            slide(0.5, -20, 0);
+            //turnToHeading(1.0, -75);
+            //turnToHeading(0.2, -90);
+            //driveStraight(0.2, 30, -90);
         }
         while (opModeIsActive()){
             telemetry.addLine("after turn");

@@ -39,6 +39,7 @@ public abstract class RobotParent extends LinearOpMode {
     static final double COUNTS_PER_MOTOR_REV = 483.3836858;  //NEED TO FIX DIS >:3
     static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * 3.14159);
     static final double DRIVE_SPEED = 0.2;
+    static final double SLIDE_COUNTS_PER_INCH = COUNTS_PER_INCH/0.85;
 
     public double  targetHeading = 0;
     public double  headingError  = 0;
