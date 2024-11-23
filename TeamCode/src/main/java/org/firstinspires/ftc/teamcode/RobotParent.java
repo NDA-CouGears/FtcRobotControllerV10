@@ -258,7 +258,6 @@ public abstract class RobotParent extends LinearOpMode {
         rightFrontDrive.setDirection(DcMotor.Direction.REVERSE);
         rightBackDrive.setDirection(DcMotor.Direction.REVERSE);
 
-        /*
         leftFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         leftBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -269,8 +268,6 @@ public abstract class RobotParent extends LinearOpMode {
         leftBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-         */
 
         armMotor.setDirection(DcMotor.Direction.FORWARD);
         armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -283,6 +280,10 @@ public abstract class RobotParent extends LinearOpMode {
         for (LynxModule module : allHubs) {
             module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
+
+        // Bulk cache is causing the first call to isBusty to always return false so call it here to
+        // clear it an ensure it works when we need it
+        leftFrontDrive.isBusy();
 
         RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.UP;
         RevHubOrientationOnRobot.UsbFacingDirection  usbDirection  = RevHubOrientationOnRobot.UsbFacingDirection.FORWARD;

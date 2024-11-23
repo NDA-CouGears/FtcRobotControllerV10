@@ -226,10 +226,6 @@ public class AutoMode extends RobotParent {
         if(opModeIsActive()) {
             //have the robot move at a higher speed first, then run a second method to correct position if overshot
             //slide(0.5, 20, 0);
-            // Bulk cache is causing the first call to isBusty to always return false so call it here to
-            // clear it an ensure it works when we need it
-            leftFrontDrive.isBusy();
-
             //turnToHeading(1.0, -75);
             //turnToHeading(0.2, -90);
             //driveStraight(0.2, 30, 0);
