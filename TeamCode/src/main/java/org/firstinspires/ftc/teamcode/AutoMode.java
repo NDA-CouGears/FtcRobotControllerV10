@@ -163,7 +163,7 @@ public class AutoMode extends RobotParent {
     }
     public void slide(double maxDriveSpeed,
                               double distance,
-                              double heading){
+                              double heading) {
 
         int moveCounts = (int)(distance * SLIDE_COUNTS_PER_INCH);
         int newLeftFrontTarget = leftFrontDrive.getCurrentPosition() - moveCounts;
@@ -200,6 +200,7 @@ public class AutoMode extends RobotParent {
     public void updateTelemetry(){
         YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
         AngularVelocity angularVelocity = imu.getRobotAngularVelocity(AngleUnit.DEGREES);
+        telemetry.addData("Motor positions:", "%d, %d, %d, %d", leftFrontDrive.getCurrentPosition(), rightFrontDrive.getCurrentPosition(), leftBackDrive.getCurrentPosition(), rightBackDrive.getCurrentPosition());
         telemetry.addData("Yaw (Z)", "%.2f Deg. (Heading)", orientation.getYaw(AngleUnit.DEGREES));
         telemetry.addData("Pitch (X)", "%.2f Deg.", orientation.getPitch(AngleUnit.DEGREES));
         telemetry.addData("Roll (Y)", "%.2f Deg.\n", orientation.getRoll(AngleUnit.DEGREES));
@@ -220,7 +221,12 @@ public class AutoMode extends RobotParent {
         if(opModeIsActive()) {
             //have the robot move at a higher speed first, then run a second method to correct position if overshot
             //slide(0.5, 20, 0);
-            slide(0.5, -20, 0);
+
+            // Bulk cache is causing the first call to isBusty to always return false so call it here to
+            // clear it an ensure it works when we need it
+            leftFrontDrive.isBusy();
+
+            slide(0.5, -40, 0);
             //turnToHeading(1.0, -75);
             //turnToHeading(0.2, -90);
             //driveStraight(0.2, 30, -90);
