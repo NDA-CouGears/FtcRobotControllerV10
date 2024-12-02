@@ -8,6 +8,7 @@ import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.SleepAction;
 import com.acmerobotics.roadrunner.ftc.Actions;
+import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.acmerobotics.roadrunner.Pose2d;
@@ -18,6 +19,8 @@ import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AngularVelocity;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
+
+import java.util.List;
 
 @Autonomous( name = "AutoMode Base", group = "OpModes")
 public class AutoMode extends RobotParent {
@@ -186,6 +189,14 @@ public class AutoMode extends RobotParent {
         maxDriveSpeed = Math.abs(maxDriveSpeed);
         moveRobot(maxDriveSpeed, 0, 0);
 
+        // We are using bulk cache so the isBusy flag will be cached along with all other sensor
+        // values when we accessed the encoder values above. Flush the cache no to ensure we get an
+        // up to date reading.
+        List<LynxModule> allHubs = hardwareMap.getAll(LynxModule.class);
+        for (LynxModule module : allHubs) {
+            module.clearBulkCache();
+        }
+
         // keep looping while we are still active, and BOTH motors are running.
         while (opModeIsActive() &&
                 (leftFrontDrive.isBusy() && leftBackDrive.isBusy() && rightFrontDrive.isBusy() && rightBackDrive.isBusy())) {
@@ -201,7 +212,6 @@ public class AutoMode extends RobotParent {
     public void updateTelemetry(){
         YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
         AngularVelocity angularVelocity = imu.getRobotAngularVelocity(AngleUnit.DEGREES);
-        telemetry.addData("Motor positions:", "%d, %d, %d, %d", leftFrontDrive.getCurrentPosition(), rightFrontDrive.getCurrentPosition(), leftBackDrive.getCurrentPosition(), rightBackDrive.getCurrentPosition());
         telemetry.addData("Yaw (Z)", "%.2f Deg. (Heading)", orientation.getYaw(AngleUnit.DEGREES));
         telemetry.addData("Pitch (X)", "%.2f Deg.", orientation.getPitch(AngleUnit.DEGREES));
         telemetry.addData("Roll (Y)", "%.2f Deg.\n", orientation.getRoll(AngleUnit.DEGREES));

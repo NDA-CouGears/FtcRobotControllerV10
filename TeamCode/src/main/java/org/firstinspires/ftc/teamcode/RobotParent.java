@@ -281,10 +281,6 @@ public abstract class RobotParent extends LinearOpMode {
             module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
 
-        // Bulk cache is causing the first call to isBusy to always return false so call it here to
-        // clear it and ensure it works when we need it
-        leftFrontDrive.isBusy();
-
         RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.UP;
         RevHubOrientationOnRobot.UsbFacingDirection  usbDirection  = RevHubOrientationOnRobot.UsbFacingDirection.FORWARD;
         RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(logoDirection, usbDirection);
