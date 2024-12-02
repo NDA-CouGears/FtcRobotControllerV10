@@ -22,22 +22,36 @@ import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
 import java.util.List;
 
-@Autonomous( name = "AutoMode Base", group = "OpModes")
+//@Autonomous( name = "AutoMode Base", group = "OpModes")
 public class AutoMode extends RobotParent {
 
-
-
     //@Juliet opens/closes claw and moves elbow arm up/down
-    private void closeClaw(){
+    protected void closeClaw(){
         claw.setPosition(ClawClosed);
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
-    private void openClaw(){
+    protected void openClaw(){
         claw.setPosition(ClawOpen);
+        try {
+            Thread.sleep(200);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
-    private void armDown(){
+    protected void armDown(){
         arm.setPosition(ARM_DOWN);
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
     }
-    private void armUp(){
+    protected void armUp(){
         arm.setPosition(ARM_UP);
     }
     public double getHeading() {
@@ -211,6 +225,26 @@ public class AutoMode extends RobotParent {
         moveRobot(0, 0, 0);
 
     }
+    public void liftBarUp(){
+        armMotor.setTargetPosition(1950);
+        armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        armMotor.setPower(1);
+
+        while (opModeIsActive() && armMotor.isBusy()) {
+            idle();
+        }
+        armMotor.setPower(0);
+    }
+    public void liftDown(){
+        armMotor.setTargetPosition(100);
+        armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        armMotor.setPower(1);
+
+        while (opModeIsActive() && armMotor.isBusy()) {
+            idle();
+        }
+        armMotor.setPower(0);
+    }
     public void updateTelemetry(){
         YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
         AngularVelocity angularVelocity = imu.getRobotAngularVelocity(AngleUnit.DEGREES);
@@ -230,33 +264,5 @@ public class AutoMode extends RobotParent {
 
 
     @Override
-    public void runOpMode() throws InterruptedException {
-        initHardware();
-        waitForStart();
-        imu.resetYaw();
-
-        if(opModeIsActive()) {
-            armUp();
-            openClaw();
-            driveStraight(0.5, 18, 0);
-            slide(0.3, -24, 0);
-            turnToHeading(0.2, 0);
-            armDown();
-            closeClaw();
-            armUp();
-
-            //have the robot move at a higher speed first, then run a second method to correct position if overshot
-            //slide(0.5, 20, 0);
-            //turnToHeading(1.0, -75);
-            //turnToHeading(0.2, -90);
-            //driveStraight(0.2, 30, 0);
-            //slide(0.5, -20, 0);
-        }
-        while (opModeIsActive()){
-            telemetry.addLine("after turn");
-            updateTelemetry();
-        }
-
-
-    }
+    public void runOpMode() throws InterruptedException {}
 }
