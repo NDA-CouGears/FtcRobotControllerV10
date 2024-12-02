@@ -26,13 +26,13 @@ public abstract class RobotParent extends LinearOpMode {
 
     protected TouchSensor touchSensor = null;
 
-    final protected static double ClawClosed = 0.23;
-    final protected static double ClawOpen = 0.92;
+    final protected static double ClawClosed = 0.4;
+    final protected static double ClawOpen = 0.8;
 
     protected Servo secondArm = null; //this arm is the one that picks up specimens
 
-    public static double ARM_UP = 0.24;
-    public static double ARM_DOWN = 0.615;
+    public static double ARM_UP = 0.26;
+    public static double ARM_DOWN = 0.7;
 
     static final double DRIVE_GEAR_REDUCTION = 1.0;
     static final double WHEEL_DIAMETER_INCHES = 102/25.4;
@@ -240,6 +240,14 @@ public abstract class RobotParent extends LinearOpMode {
             claw.setPosition(ClawClosed);
         }
     }
+
+    public void clearBulkCache() {
+        List<LynxModule> allHubs = hardwareMap.getAll(LynxModule.class);
+        for (LynxModule module : allHubs) {
+            module.clearBulkCache();
+        }
+    }
+
     public void initHardware(){
         leftFrontDrive  = hardwareMap.get(DcMotor.class, "lf_drive");
         leftBackDrive  = hardwareMap.get(DcMotor.class, "lb_drive");

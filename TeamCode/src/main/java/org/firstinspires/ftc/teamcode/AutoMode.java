@@ -141,6 +141,11 @@ public class AutoMode extends RobotParent {
             maxDriveSpeed = Math.abs(maxDriveSpeed);
             moveRobot(maxDriveSpeed, 0, 0);
 
+            // We are using bulk cache so the isBusy flag will be cached along with all other sensor
+            // values when we accessed the encoder values above. Flush the cache no to ensure we get an
+            // up to date reading.
+            clearBulkCache();
+
             // keep looping while we are still active, and BOTH motors are running.
             while (opModeIsActive() &&
                     (leftFrontDrive.isBusy() && leftBackDrive.isBusy() && rightFrontDrive.isBusy() && rightBackDrive.isBusy())) {
@@ -192,10 +197,7 @@ public class AutoMode extends RobotParent {
         // We are using bulk cache so the isBusy flag will be cached along with all other sensor
         // values when we accessed the encoder values above. Flush the cache no to ensure we get an
         // up to date reading.
-        List<LynxModule> allHubs = hardwareMap.getAll(LynxModule.class);
-        for (LynxModule module : allHubs) {
-            module.clearBulkCache();
-        }
+        clearBulkCache();
 
         // keep looping while we are still active, and BOTH motors are running.
         while (opModeIsActive() &&
@@ -234,12 +236,21 @@ public class AutoMode extends RobotParent {
         imu.resetYaw();
 
         if(opModeIsActive()) {
+            armUp();
+            openClaw();
+            driveStraight(0.5, 18, 0);
+            slide(0.3, -24, 0);
+            turnToHeading(0.2, 0);
+            armDown();
+            closeClaw();
+            armUp();
+
             //have the robot move at a higher speed first, then run a second method to correct position if overshot
             //slide(0.5, 20, 0);
             //turnToHeading(1.0, -75);
             //turnToHeading(0.2, -90);
             //driveStraight(0.2, 30, 0);
-            slide(0.5, -20, 0);
+            //slide(0.5, -20, 0);
         }
         while (opModeIsActive()){
             telemetry.addLine("after turn");
