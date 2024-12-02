@@ -63,7 +63,10 @@ public class VisionExampleOpMode extends AutoMode {
         // decimation) for accuracy from range. With the smaller april tags we would lower this.
         tagProcessor.setDecimation(3);
 
+        // Ground level cam aimed straight ahead, good for april tags
         webcam1 = hardwareMap.get(WebcamName.class, "Webcam 1");
+
+        // Elevated camera angled downward, good for sample location and identification
         webcam2 = hardwareMap.get(WebcamName.class, "Webcam 2");
         CameraName switchableCamera = ClassFactory.getInstance()
                 .getCameraManager().nameForSwitchableCamera(webcam1, webcam2);
@@ -74,6 +77,8 @@ public class VisionExampleOpMode extends AutoMode {
                 .setCameraResolution(new Size(640, 480))
                 .build();
 
+        // Default to looking from the elevated camera for sample search
+        portal.setActiveCamera(webcam2);
     }
 
     @Override
