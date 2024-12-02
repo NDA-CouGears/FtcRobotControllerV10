@@ -14,7 +14,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngularVelocity;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
 @TeleOp(name="Hardware Test", group="Tests")
-public class SpeedTestOpMode  extends LinearOpMode {
+public class HardwareTestOpMode extends LinearOpMode {
     public static double ARM_UP = 0.24;
     public static double ARM_DOWN = 0.615;
 
@@ -53,7 +53,7 @@ public class SpeedTestOpMode  extends LinearOpMode {
             lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            lift.setDirection(DcMotorSimple.Direction.REVERSE);
+            lift.setDirection(DcMotorSimple.Direction.FORWARD);
         }
 
         /////////////////////////////////////////////
@@ -122,7 +122,7 @@ public class SpeedTestOpMode  extends LinearOpMode {
                     lift.setPower(0);
                 }
                 else {
-                    double lift_delta = gamepad1.left_stick_y;
+                    double lift_delta = -gamepad1.left_stick_y;
                     lift_hold_pos = lift.getCurrentPosition();
                     lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                     lift.setPower(lift_delta);
