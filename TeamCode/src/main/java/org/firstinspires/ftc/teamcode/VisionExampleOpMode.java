@@ -6,6 +6,7 @@ import android.util.Size;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.util.Range;
 import com.qualcomm.robotcore.util.SortOrder;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
@@ -18,6 +19,7 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import org.firstinspires.ftc.vision.opencv.ColorBlobLocatorProcessor;
 import org.firstinspires.ftc.vision.opencv.ColorRange;
 import org.firstinspires.ftc.vision.opencv.ImageRegion;
+import org.opencv.core.Point;
 import org.opencv.core.RotatedRect;
 
 import java.util.List;
@@ -68,17 +70,15 @@ public class VisionExampleOpMode extends AutoMode {
 
         // Elevated camera angled downward, good for sample location and identification
         webcam2 = hardwareMap.get(WebcamName.class, "Webcam 2");
+
         CameraName switchableCamera = ClassFactory.getInstance()
-                .getCameraManager().nameForSwitchableCamera(webcam1, webcam2);
+                .getCameraManager().nameForSwitchableCamera(webcam2, webcam1);
 
         portal = new VisionPortal.Builder()
                 .setCamera(switchableCamera)
                 .addProcessors(blueLocator, redLocator, yellowLocator, tagProcessor)
                 .setCameraResolution(new Size(640, 480))
                 .build();
-
-        // Default to looking from the elevated camera for sample search
-        portal.setActiveCamera(webcam2);
     }
 
     @Override
@@ -135,24 +135,50 @@ public class VisionExampleOpMode extends AutoMode {
             for (ColorBlobLocatorProcessor.Blob b : blueBlobs) {
                 RotatedRect boxFit = b.getBoxFit();
                 telemetry.addLine(String.format(Locale.US,
-                        "Blue: (%3d,%3d) %5d  %4.2f   %5.2f",
-                        (int) boxFit.center.x, (int) boxFit.center.y, b.getContourArea(), b.getDensity(), b.getAspectRatio()));
+                        "Blue: (%3d,%3d,%f) %5d  %4.2f   %5.2f",
+                        (int) boxFit.center.x, (int) boxFit.center.y, boxFit.angle, b.getContourArea(), b.getDensity(), b.getAspectRatio()));
             }
             for (ColorBlobLocatorProcessor.Blob b : redBlobs) {
                 RotatedRect boxFit = b.getBoxFit();
                 telemetry.addLine(String.format(Locale.US,
-                        "Red: (%3d,%3d) %5d  %4.2f   %5.2f",
-                        (int) boxFit.center.x, (int) boxFit.center.y, b.getContourArea(), b.getDensity(), b.getAspectRatio()));
+                        "Red: (%3d,%3d,%f) %5d  %4.2f   %5.2f",
+                        (int) boxFit.center.x, (int) boxFit.center.y, boxFit.angle, b.getContourArea(), b.getDensity(), b.getAspectRatio()));
             }
             for (ColorBlobLocatorProcessor.Blob b : yellowBlobs) {
                 RotatedRect boxFit = b.getBoxFit();
                 telemetry.addLine(String.format(Locale.US,
-                        "Yellow: (%3d,%3d) %5d  %4.2f   %5.2f",
-                        (int) boxFit.center.x, (int) boxFit.center.y, b.getContourArea(), b.getDensity(), b.getAspectRatio()));
+                        "Yellow: (%3d,%3d,%f) %5d  %4.2f   %5.2f",
+                        (int) boxFit.center.x, (int) boxFit.center.y, boxFit.angle, b.getContourArea(), b.getDensity(), b.getAspectRatio()));
             }
 
             telemetry.update();
+
+            if (gamepad1.start) {
+                break;
+            }
+
             sleep(50);
+        }
+
+        while (opModeIsActive()) {
+            List<ColorBlobLocatorProcessor.Blob> blueBlobs = blueLocator.getBlobs();
+            ColorBlobLocatorProcessor.Util.filterByArea(4000, 20000, blueBlobs);  // filter out very small blobs.
+            //ColorBlobLocatorProcessor.Util.sortByArea(SortOrder.DESCENDING, blobs);      // Default so no need to call
+
+            if (!blueBlobs.isEmpty()) {
+                // Try to center the claw on the largest blue blob. Because of current camera placement
+                // the claw is aligned when x = 400, 0 is max left 640 is max right
+                ColorBlobLocatorProcessor.Blob target = blueBlobs.get(0);
+                Point center = target.getBoxFit().center;
+                double error = center.x-400;
+
+                if (error > 10) {
+                    slide(0.2, error / 40, 0);
+                }
+                else {
+                    break;
+                }
+            }
         }
 
         portal.close();
