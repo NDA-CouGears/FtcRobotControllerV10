@@ -26,13 +26,13 @@ public abstract class RobotParent extends LinearOpMode {
 
     protected TouchSensor touchSensor = null;
 
-    final protected static double ClawClosed = 0.4;
-    final protected static double ClawOpen = 0.8;
+    final protected static double ClawClosed = 0.63;
+    final protected static double ClawOpen = 0.18;
 
     protected Servo secondArm = null; //this arm is the one that picks up specimens
 
-    public static double ARM_UP = 0.26;
-    public static double ARM_DOWN = 0.685;
+    public static double ARM_UP = 0.14;
+    public static double ARM_DOWN = 0.65;
 
     static final double DRIVE_GEAR_REDUCTION = 1.0;
     static final double WHEEL_DIAMETER_INCHES = 102/25.4;
