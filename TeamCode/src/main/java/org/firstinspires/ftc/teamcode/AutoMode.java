@@ -265,7 +265,7 @@ public class AutoMode extends RobotParent {
         armMotor.setPower(0);
     }
     public void liftDown(){
-        armMotor.setTargetPosition(0);
+        armMotor.setTargetPosition(1);
         armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         armMotor.setPower(1);
 
