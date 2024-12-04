@@ -1,6 +1,6 @@
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+package org.firstinspires.ftc.teamcode;
 
-import org.firstinspires.ftc.teamcode.AutoMode;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 @Autonomous( name = "RightPath", group = "OpModes")
 public class AutoRightPath extends AutoMode {
