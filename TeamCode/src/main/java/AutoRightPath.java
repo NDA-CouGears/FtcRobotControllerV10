@@ -2,7 +2,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.AutoMode;
 
-@Autonomous( name = "AutoRightPath", group = "OpModes")
+@Autonomous( name = "RightPath", group = "OpModes")
 public class AutoRightPath extends AutoMode {
     @Override
     public void runOpMode() throws InterruptedException {

@@ -2,7 +2,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.AutoMode;
 
-@Autonomous( name = "AutoMiddlePath", group = "OpModes")
+@Autonomous( name = "MiddlePath", group = "OpModes")
 public class AutoMiddlePath extends AutoMode {
     public void runOpMode() throws InterruptedException {
         initHardware();
