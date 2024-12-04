@@ -34,6 +34,7 @@ public class AutoLeftPath extends AutoMode {
             armBasketDown();
             openClaw();
             armUp();
+            sleep(100);
             liftDown();
 
 
