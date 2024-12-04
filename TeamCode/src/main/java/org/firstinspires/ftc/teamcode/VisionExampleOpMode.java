@@ -4,6 +4,7 @@ import android.util.Size;
 
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.Range;
 import com.qualcomm.robotcore.util.SortOrder;
 
@@ -22,7 +23,7 @@ import org.opencv.core.RotatedRect;
 import java.util.List;
 import java.util.Locale;
 
-@Autonomous( name = "Vision", group = "Examples")
+@TeleOp( name = "Vision", group = "Examples")
 public class VisionExampleOpMode extends AutoMode {
     private WebcamName forward_cam, downward_cam;
     VisionPortal portal;
@@ -94,28 +95,31 @@ public class VisionExampleOpMode extends AutoMode {
 
         while (opModeIsActive()) {
             telemetry.addLine("Use joysticks to drive until a tag or blob is in view");
-            telemetry.addLine("Press A to drive to april tag");
-            telemetry.addLine("Press B to drive to largest blob");
-            telemetry.addLine("Press X to see debug telemetry");
+            telemetry.addLine("Press DPad Left to drive to april tag");
+            telemetry.addLine("Press DPad Right to drive to largest blob");
 
-            if (gamepad1.a) {
+            if (gamepad1.dpad_left) {
+                // When looking for april tags switch to forward camera
+                portal.setActiveCamera(forward_cam);
+
                 // Drive to the tag in front of us until we are 18 inches away
                 driveToTag(18);
             }
-            else if (gamepad1.b) {
+            else if (gamepad1.dpad_right) {
+                // When looking for blobs switch to downward camera
+                portal.setActiveCamera(downward_cam);
+
                 // Current camera location dictate the target x and y for blob, this is pixel
                 // location in the camera image of the desired center of the blob. Maintain our
                 // current heading while lining up with the target
-                driveToBlob(0.5,400, 50, getHeading());
+                driveToBlob(0.2,400, 50, getHeading());
             }
             else {
-                if (gamepad1.x) {
-                    debugVision();
-                }
+                debugVision();
 
                 double x = -gamepad1.left_stick_y * .5;
-                double y = gamepad1.left_stick_x * .5;
-                double yaw = gamepad1.right_stick_x;
+                double y = -gamepad1.left_stick_x * .5;
+                double yaw = -gamepad1.right_stick_x;
                 moveRobot(x,y,yaw);
             }
 
@@ -182,7 +186,7 @@ public class VisionExampleOpMode extends AutoMode {
      * @param targetY The desired y location of the center of the blob
      */
     private void driveToBlob(double maxSpeed, double targetX, double targetY, double heading) {
-        while (opModeInInit()) {
+        while (opModeIsActive()) {
             List<ColorBlobLocatorProcessor.Blob> blobs = blueLocator.getBlobs();
             blobs.addAll(yellowLocator.getBlobs());
             blobs.addAll(redLocator.getBlobs());
@@ -192,6 +196,7 @@ public class VisionExampleOpMode extends AutoMode {
 
             if (blobs.isEmpty()) {
                 // No blob in sight, return
+                telemetry.addLine("No blob found!");
                 return;
             }
 
@@ -206,6 +211,12 @@ public class VisionExampleOpMode extends AutoMode {
             double  strafeError = (center.x - targetX);
             double turnSpeed = getSteeringCorrection(heading, P_TURN_GAIN);
 
+            telemetry.addLine(String.format(Locale.US,
+                    "Driving to: (%3d,%3d) %5d  %4.2f   %5.2f",
+                    (int) center.x, (int) center.y, target.getContourArea(), target.getDensity(), target.getAspectRatio()));
+            telemetry.addLine(String.format(Locale.US,
+                    "Errors (range, strafe, turn): %3.2f, %3.2f, %3.2f",rangeError, strafeError, headingError));
+
             // If we are close on all axes stop, we need to experiment to find good values, too small
             // and we will loop forever trying to get perfect, too large and we will miss our target
             // Keep in mind that range and strafe error are in pixels, headingError is in degrees
@@ -214,7 +225,7 @@ public class VisionExampleOpMode extends AutoMode {
             }
 
             double driveSpeed  = Range.clip(rangeError * 0.05, -maxSpeed, maxSpeed);
-            double strafeSpeed = Range.clip(-strafeError * 0.05, -maxSpeed, maxSpeed);
+            double strafeSpeed = Range.clip(strafeError * 0.05, -maxSpeed, maxSpeed);
 
             telemetry.addData("Auto","Drive %5.2f, Strafe %5.2f, Turn %5.2f ", driveSpeed, strafeSpeed, turnSpeed);
 
@@ -224,7 +235,7 @@ public class VisionExampleOpMode extends AutoMode {
 
             sleep(10);
         }
-        
+
         moveRobot(0, 0, 0);
     }
 
@@ -233,9 +244,8 @@ public class VisionExampleOpMode extends AutoMode {
      * cameras so there are control to switch between them for testing.
      */
     private void debugVision() {
-        telemetry.addLine("Use menu to enable camera stream");
-        telemetry.addLine("Press A to use downward camera");
-        telemetry.addLine("Press B to use forward camera");
+        telemetry.addLine("Press A to use forward camera");
+        telemetry.addLine("Press B to use downward camera");
 
         // Turn stream on or off
         if (gamepad1.y && (portal.getCameraState() == VisionPortal.CameraState.STREAMING)) {
@@ -281,20 +291,20 @@ public class VisionExampleOpMode extends AutoMode {
         for (ColorBlobLocatorProcessor.Blob b : blueBlobs) {
             RotatedRect boxFit = b.getBoxFit();
             telemetry.addLine(String.format(Locale.US,
-                    "Blue: (%3d,%3d,%f) %5d  %4.2f   %5.2f",
-                    (int) boxFit.center.x, (int) boxFit.center.y, boxFit.angle, b.getContourArea(), b.getDensity(), b.getAspectRatio()));
+                    "Blue: (%3d,%3d) %5d  %4.2f   %5.2f",
+                    (int) boxFit.center.x, (int) boxFit.center.y, b.getContourArea(), b.getDensity(), b.getAspectRatio()));
         }
         for (ColorBlobLocatorProcessor.Blob b : redBlobs) {
             RotatedRect boxFit = b.getBoxFit();
             telemetry.addLine(String.format(Locale.US,
-                    "Red: (%3d,%3d,%f) %5d  %4.2f   %5.2f",
-                    (int) boxFit.center.x, (int) boxFit.center.y, boxFit.angle, b.getContourArea(), b.getDensity(), b.getAspectRatio()));
+                    "Red: (%3d,%3d) %5d  %4.2f   %5.2f",
+                    (int) boxFit.center.x, (int) boxFit.center.y, b.getContourArea(), b.getDensity(), b.getAspectRatio()));
         }
         for (ColorBlobLocatorProcessor.Blob b : yellowBlobs) {
             RotatedRect boxFit = b.getBoxFit();
             telemetry.addLine(String.format(Locale.US,
-                    "Yellow: (%3d,%3d,%f) %5d  %4.2f   %5.2f",
-                    (int) boxFit.center.x, (int) boxFit.center.y, boxFit.angle, b.getContourArea(), b.getDensity(), b.getAspectRatio()));
+                    "Yellow: (%3d,%3d) %5d  %4.2f   %5.2f",
+                    (int) boxFit.center.x, (int) boxFit.center.y, b.getContourArea(), b.getDensity(), b.getAspectRatio()));
         }
     }
 }
