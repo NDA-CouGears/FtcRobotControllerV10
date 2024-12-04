@@ -169,7 +169,13 @@ public class VisionExampleOpMode extends AutoMode {
 
             telemetry.addData("Auto","Drive %5.2f, Strafe %5.2f, Turn %5.2f ", driveSpeed, strafeSpeed, turnSpeed);
 
-            moveRobot(driveSpeed, strafeSpeed, turnSpeed);
+            // For debugging let us pause motion to see telemetry
+            if (gamepad1.y) {
+                moveRobot(0, 0, 0);
+            }
+            else {
+                moveRobot(driveSpeed, strafeSpeed, turnSpeed);
+            }
 
             telemetry.update();
 
@@ -217,23 +223,35 @@ public class VisionExampleOpMode extends AutoMode {
             telemetry.addLine(String.format(Locale.US,
                     "Errors (range, strafe, turn): %3.2f, %3.2f, %3.2f",rangeError, strafeError, headingError));
 
+            // To avoid wiggling when the pixel error gets small zero it out
+            if (Math.abs(rangeError) < 5) {
+                rangeError = 0;
+            }
+            if (Math.abs(strafeError) < 5) {
+                strafeError = 0;
+            }
+
             // If we are close on all axes stop, we need to experiment to find good values, too small
             // and we will loop forever trying to get perfect, too large and we will miss our target
             // Keep in mind that range and strafe error are in pixels, headingError is in degrees
-            if (Math.abs(rangeError) < 3 && Math.abs(strafeError) < 3 && Math.abs(headingError) < HEADING_THRESHOLD) {
+            if (rangeError == 0 && strafeError == 0 && Math.abs(headingError) < HEADING_THRESHOLD) {
                 break;
             }
 
-            double driveSpeed  = Range.clip(rangeError * 0.05, -maxSpeed, maxSpeed);
-            double strafeSpeed = Range.clip(strafeError * 0.05, -maxSpeed, maxSpeed);
+            double driveSpeed  = Range.clip(rangeError * 0.01, -maxSpeed, maxSpeed);
+            double strafeSpeed = Range.clip(strafeError * 0.01, -maxSpeed, maxSpeed);
 
             telemetry.addData("Auto","Drive %5.2f, Strafe %5.2f, Turn %5.2f ", driveSpeed, strafeSpeed, turnSpeed);
 
-            moveRobot(driveSpeed, strafeSpeed, turnSpeed);
+            // For debugging let us pause motion to see telemetry
+            if (gamepad1.y) {
+                moveRobot(0, 0, 0);
+            }
+            else {
+                moveRobot(driveSpeed, strafeSpeed, turnSpeed);
+            }
 
             telemetry.update();
-
-            sleep(10);
         }
 
         moveRobot(0, 0, 0);
