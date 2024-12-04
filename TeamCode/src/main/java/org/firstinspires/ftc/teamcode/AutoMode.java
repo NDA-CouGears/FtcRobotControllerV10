@@ -51,6 +51,15 @@ public class AutoMode extends RobotParent {
         }
 
     }
+    protected void armBasketDown(){
+        arm.setPosition(0.35);
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
     protected void armUp(){
         arm.setPosition(ARM_UP);
     }
@@ -235,8 +244,28 @@ public class AutoMode extends RobotParent {
         }
         armMotor.setPower(0);
     }
+    public void liftLowerBasket(){
+        armMotor.setTargetPosition(2000);
+        armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        armMotor.setPower(1);
+
+        while (opModeIsActive() && armMotor.isBusy()) {
+            idle();
+        }
+        armMotor.setPower(0);
+    }
+    public void liftHigherBasket(){
+        armMotor.setTargetPosition(5000);
+        armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        armMotor.setPower(1);
+
+        while (opModeIsActive() && armMotor.isBusy()) {
+            idle();
+        }
+        armMotor.setPower(0);
+    }
     public void liftDown(){
-        armMotor.setTargetPosition(100);
+        armMotor.setTargetPosition(0);
         armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         armMotor.setPower(1);
 
