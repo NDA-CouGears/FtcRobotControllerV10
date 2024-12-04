@@ -224,6 +224,8 @@ public class VisionExampleOpMode extends AutoMode {
 
             sleep(10);
         }
+        
+        moveRobot(0, 0, 0);
     }
 
     /**
