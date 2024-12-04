@@ -15,33 +15,33 @@ public class AutoLeftPath extends AutoMode {
             closeClaw();
             driveStraight(0.4, 4, 0);
             turnToHeading(0.4, 90);
+            liftHigherBasketNoWait();
             driveStraight(0.4, 12, 90);
             turnToHeading(0.4, 120);
-            liftHigherBasket();
+            waitForLift();
             armBasketDown();
             openClaw();
             armUp();
-            liftDown();
+            liftDownNoWait();
 
             turnToHeading(0.4, 0);
-            sleep(1000);
             driveStraight(0.4, 13, 0);
-            sleep(1000);
             turnToHeading(0.4, 0);
-            sleep(1000);
+            waitForLift();
             armDown();
             closeClaw();
             armUp();
+            liftHigherBasketNoWait();
             driveStraight(0.4, -13, 0);
             turnToHeading(0.4, 120);
-            liftHigherBasket();
+            waitForLift();
             armBasketDown();
             openClaw();
             armUp();
             sleep(100);
-            liftDown();
+            liftDownNoWait();
 
-            /*turnToHeading(0.4, 0);
+            turnToHeading(0.4, 0);
             driveStraight(0.4, 13, 0);
             slide(0.4, 8, 0);
             armDown();
@@ -56,7 +56,7 @@ public class AutoLeftPath extends AutoMode {
             armUp();
             sleep(100);
             liftDown();
-            */
+            
         }
         while (opModeIsActive()){
             telemetry.addLine("after turn");

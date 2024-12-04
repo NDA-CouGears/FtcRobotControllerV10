@@ -264,6 +264,13 @@ public class AutoMode extends RobotParent {
         }
         armMotor.setPower(0);
     }
+
+    public void liftHigherBasketNoWait(){
+        armMotor.setTargetPosition(5000);
+        armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        armMotor.setPower(1);
+
+    }
     public void liftDown(){
         armMotor.setTargetPosition(1);
         armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -274,6 +281,18 @@ public class AutoMode extends RobotParent {
         }
         armMotor.setPower(0);
     }
+    public void liftDownNoWait(){
+        armMotor.setTargetPosition(1);
+        armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        armMotor.setPower(1);
+    }
+    public void waitForLift(){
+        while (opModeIsActive() && armMotor.isBusy()) {
+            idle();
+        }
+        armMotor.setPower(0);
+    }
+
     public void updateTelemetry(){
         YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
         AngularVelocity angularVelocity = imu.getRobotAngularVelocity(AngleUnit.DEGREES);
