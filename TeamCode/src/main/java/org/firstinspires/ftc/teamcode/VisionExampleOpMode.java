@@ -13,6 +13,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.CameraName;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
@@ -80,8 +81,6 @@ public class VisionExampleOpMode extends AutoMode {
                 .addProcessors(blueLocator, redLocator, yellowLocator, tagProcessor)
                 .setCameraResolution(new Size(640, 480))
                 .build();
-
-        //setManualExposure(6, 250);  // Use low exposure time to reduce motion blur
     }
 
     /*
@@ -145,6 +144,7 @@ public class VisionExampleOpMode extends AutoMode {
             if (gamepad1.dpad_left) {
                 // When looking for april tags switch to forward camera
                 portal.setActiveCamera(forward_cam);
+                setManualExposure(6, 250);  // Use low exposure time to reduce motion blur
 
                 // Drive to the tag in front of us until we are 18 inches away
                 driveToTag(18);
@@ -157,6 +157,9 @@ public class VisionExampleOpMode extends AutoMode {
                 // location in the camera image of the desired center of the blob. Maintain our
                 // current heading while lining up with the target
                 driveToBlob(0.2,400, 50, getHeading());
+            }
+            else if (gamepad1.dpad_up) {
+                driveToDistance(1,7, getHeading());
             }
             else {
                 debugVision();
@@ -171,6 +174,45 @@ public class VisionExampleOpMode extends AutoMode {
         }
 
         portal.close();
+    }
+
+    private void driveToDistance(double maxSpeed, double targetDistance, double heading) {
+        final double SPEED_GAIN  =  0.03  ;   //  Forward Speed Control "Gain". e.g. Ramp up to 50% power at a 25 inch error.   (0.50 / 25.0)
+        final double TURN_GAIN   =  0.01  ;   //  Turn Control "Gain".  e.g. Ramp up to 25% power at a 25 degree error. (0.25 / 25.0)
+
+        do {
+            while (opModeIsActive()) {
+                double rangeError = (sensorDistance.getDistance(DistanceUnit.INCH) - targetDistance);
+
+                // If we are close on all axes stop, we need to experiment to find good values
+                if (Math.abs(rangeError) < 1) {
+                    break;
+                }
+
+                // Use the speed and turn "gains" to calculate how we want the robot to move. These are
+                // more values with best guesses that need experimentation to find good values
+                double driveSpeed = 0;
+                double turnSpeed = getSteeringCorrection(heading, TURN_GAIN);
+
+                if (rangeError < 0) {
+                    driveSpeed = Range.clip(rangeError * SPEED_GAIN, -maxSpeed, -0.1);
+                } else {
+                    driveSpeed = Range.clip(rangeError * SPEED_GAIN, 0.1, maxSpeed);
+                }
+                telemetry.addData("Auto", "Drive %5.2f, Turn %5.2f ", driveSpeed, turnSpeed);
+
+                // For debugging let us pause motion to see telemetry
+                if (gamepad1.y) {
+                    moveRobot(0, 0, 0);
+                } else {
+                    moveRobot(driveSpeed, 0, turnSpeed);
+                }
+
+                telemetry.update();
+            }
+        } while (sensorDistance.getDistance(DistanceUnit.INCH) > targetDistance); // if we over shot loop again to back up a bit
+
+        moveRobot(0, 0, 0);
     }
 
     private void driveToTag(double tagTargetDistance) {
@@ -195,9 +237,9 @@ public class VisionExampleOpMode extends AutoMode {
 
             // Determine heading, range and Yaw (tag image rotation) error so we can use them to
             // control the robot automatically.
-            double  rangeError      = (desiredTag.ftcPose.range - tagTargetDistance);
-            double  headingError    = desiredTag.ftcPose.bearing;
-            double  yawError        = desiredTag.ftcPose.yaw;
+            double rangeError = (sensorDistance.getDistance(DistanceUnit.INCH) - tagTargetDistance);
+            double headingError = desiredTag.ftcPose.bearing;
+            double yawError = desiredTag.ftcPose.yaw;
 
             // If we are close on all axes stop, we need to experiment to find good values
             if (Math.abs(rangeError) < 1 && headingError < 1 && yawError < 1) {
@@ -211,7 +253,7 @@ public class VisionExampleOpMode extends AutoMode {
             double strafeSpeed = Range.clip(-yawError * STRAFE_GAIN, -MAX_AUTO_STRAFE, MAX_AUTO_STRAFE);
             double turnSpeed = Range.clip(headingError * TURN_GAIN, -MAX_AUTO_TURN, MAX_AUTO_TURN);
 
-            telemetry.addData("Auto","Drive %5.2f, Strafe %5.2f, Turn %5.2f ", driveSpeed, strafeSpeed, turnSpeed);
+            telemetry.addData("Auto Drive Distance","Range %f, Drive %5.2f, Strafe %5.2f, Turn %5.2f ", sensorDistance.getDistance(DistanceUnit.INCH), driveSpeed, strafeSpeed, turnSpeed);
 
             // For debugging let us pause motion to see telemetry
             if (gamepad1.y) {
@@ -222,8 +264,6 @@ public class VisionExampleOpMode extends AutoMode {
             }
 
             telemetry.update();
-
-            sleep(10);
         }
 
         moveRobot(0, 0, 0);
@@ -310,9 +350,9 @@ public class VisionExampleOpMode extends AutoMode {
         telemetry.addLine("Press B to use downward camera");
 
         // Turn stream on or off
-        if (gamepad1.y && (portal.getCameraState() == VisionPortal.CameraState.STREAMING)) {
+        if (gamepad1.back && (portal.getCameraState() == VisionPortal.CameraState.STREAMING)) {
             portal.stopStreaming();
-        } else if (gamepad1.x && (portal.getCameraState() != VisionPortal.CameraState.STREAMING)) {
+        } else if (gamepad1.start && (portal.getCameraState() != VisionPortal.CameraState.STREAMING)) {
             portal.resumeStreaming();
         }
 
