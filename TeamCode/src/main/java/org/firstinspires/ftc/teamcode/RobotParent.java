@@ -4,6 +4,7 @@ import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
@@ -25,6 +26,8 @@ public abstract class RobotParent extends LinearOpMode {
     protected DcMotor armMotor = null;
 
     protected TouchSensor touchSensor = null;
+
+    protected DistanceSensor sensorDistance = null;
 
     final protected static double ClawClosed = 0.63;
     final protected static double ClawOpen = 0.18;
@@ -260,6 +263,8 @@ public abstract class RobotParent extends LinearOpMode {
         armMotor = hardwareMap.get(DcMotor.class, "lift");
 
         touchSensor = hardwareMap.get(TouchSensor.class, "touchSensor");
+
+        sensorDistance = hardwareMap.get(DistanceSensor.class, "distance");
 
         leftFrontDrive.setDirection(DcMotor.Direction.FORWARD);
         leftBackDrive.setDirection(DcMotor.Direction.FORWARD);
