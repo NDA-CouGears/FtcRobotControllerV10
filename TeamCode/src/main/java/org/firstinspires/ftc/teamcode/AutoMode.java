@@ -14,6 +14,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.acmerobotics.roadrunner.Vector2d;
+import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -29,7 +30,7 @@ public class AutoMode extends RobotParent {
     protected void closeClaw(){
         claw.setPosition(ClawClosed);
         try {
-            Thread.sleep(500);
+            Thread.sleep(200);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
@@ -143,6 +144,7 @@ public class AutoMode extends RobotParent {
         // Ensure that the OpMode is still active
         if (opModeIsActive()) {
             // Determine new target position, and pass to motor controller
+            ElapsedTime runtime = new ElapsedTime();
             int moveCounts = (int)(distance * COUNTS_PER_INCH);
             int newLeftFrontTarget = leftFrontDrive.getCurrentPosition() + moveCounts;
             int newLeftBackTarget = leftBackDrive.getCurrentPosition() + moveCounts;
@@ -181,7 +183,16 @@ public class AutoMode extends RobotParent {
                     turnSpeed *= -1.0;
 
                 // Apply the turning correction to the current driving speed.
-                moveRobot(maxDriveSpeed, 0, turnSpeed);
+                if (runtime.seconds() < 1){
+                    moveRobot(maxDriveSpeed * runtime.seconds() * 2, 0, turnSpeed);
+                }
+                else {
+                    double remainingDistance = (newLeftFrontTarget - leftFrontDrive.getCurrentPosition())/COUNTS_PER_INCH;
+                    double driveSpeed = remainingDistance/10 * maxDriveSpeed;
+                    driveSpeed = Range.clip(driveSpeed, -maxDriveSpeed, maxDriveSpeed);
+                    moveRobot(driveSpeed, 0, turnSpeed);
+                }
+
 
                 // Display drive status for the driver.
                 updateTelemetry();
@@ -288,7 +299,7 @@ public class AutoMode extends RobotParent {
     }
     public void waitForLift(){
         while (opModeIsActive() && armMotor.isBusy()) {
-            idle();
+            //idle();
         }
         armMotor.setPower(0);
     }

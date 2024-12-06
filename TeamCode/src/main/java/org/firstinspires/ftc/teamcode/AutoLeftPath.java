@@ -11,6 +11,7 @@ public class AutoLeftPath extends AutoMode {
         imu.resetYaw();
 
         if (opModeIsActive()){
+            //starts w/ block; puts in higher basket
             armUp();
             closeClaw();
             driveStraight(0.4, 4, 0);
@@ -23,16 +24,14 @@ public class AutoLeftPath extends AutoMode {
             openClaw();
             armUp();
             liftDownNoWait();
-
-            turnToHeading(0.4, 0);
-            driveStraight(0.4, 13, 0);
-            turnToHeading(0.4, 0);
-            waitForLift();
+            //gets first block; puts in higher basket
+            turnToHeading(0.4, -3);
+            driveStraight(0.4, 15, -3);
             armDown();
             closeClaw();
             armUp();
             liftHigherBasketNoWait();
-            driveStraight(0.4, -13, 0);
+            driveStraight(0.4, -14, -3);
             turnToHeading(0.4, 120);
             waitForLift();
             armBasketDown();
@@ -40,17 +39,18 @@ public class AutoLeftPath extends AutoMode {
             armUp();
             sleep(100);
             liftDownNoWait();
-
+            //gets second block; puts in higher basket
             turnToHeading(0.4, 0);
             driveStraight(0.4, 13, 0);
-            slide(0.4, 8, 0);
+            slide(0.2, 8, 0);
             armDown();
             closeClaw();
             armUp();
-            slide(0.4, -8, 0);
-            driveStraight(0.4, -13, 0);
-            turnToHeading(0.4, 120);
-            liftHigherBasket();
+            slide(0.2, -8, 0);
+            liftHigherBasketNoWait();
+            driveStraight(0.4, -13, -8);
+            turnToHeading(0.4, 125);
+            waitForLift();
             armBasketDown();
             openClaw();
             armUp();
