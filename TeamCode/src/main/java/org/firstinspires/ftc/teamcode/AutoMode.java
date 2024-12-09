@@ -43,6 +43,7 @@ public class AutoMode extends RobotParent {
             throw new RuntimeException(e);
         }
     }
+
     protected void armDown(){
         arm.setPosition(ARM_DOWN);
         try {
@@ -52,6 +53,17 @@ public class AutoMode extends RobotParent {
         }
 
     }
+
+    protected void armSetPosition(double amount, long delay){
+        try {
+            arm.setPosition(ARM_DOWN*amount);
+            Thread.sleep(delay);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
     protected void armBasketDown(){
         arm.setPosition(0.35);
         try {
