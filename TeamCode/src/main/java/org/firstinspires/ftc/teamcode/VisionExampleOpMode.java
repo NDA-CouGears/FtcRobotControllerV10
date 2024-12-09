@@ -144,7 +144,10 @@ public class VisionExampleOpMode extends AutoMode {
             if (gamepad1.dpad_left) {
                 // When looking for april tags switch to forward camera
                 portal.setActiveCamera(forward_cam);
-                setManualExposure(6, 250);  // Use low exposure time to reduce motion blur
+                // This was copied from the example but was causing issues, need to look into it. We
+                // Do seem to lose tracking while in motion so we should try to find values that
+                // improve that
+                //setManualExposure(6, 250);  // Use low exposure time to reduce motion blur
 
                 // Drive to the tag in front of us until we are 18 inches away
                 driveToTag(18);
