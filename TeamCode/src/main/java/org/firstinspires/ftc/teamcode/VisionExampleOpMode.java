@@ -176,7 +176,7 @@ public class VisionExampleOpMode extends AutoMode {
         portal.close();
     }
 
-    private void driveToDistance(double maxSpeed, double targetDistance, double heading) {
+    public void driveToDistance(double maxSpeed, double targetDistance, double heading) {
         final double SPEED_GAIN  =  0.03  ;   //  Forward Speed Control "Gain". e.g. Ramp up to 50% power at a 25 inch error.   (0.50 / 25.0)
         final double TURN_GAIN   =  0.01  ;   //  Turn Control "Gain".  e.g. Ramp up to 25% power at a 25 degree error. (0.25 / 25.0)
 
