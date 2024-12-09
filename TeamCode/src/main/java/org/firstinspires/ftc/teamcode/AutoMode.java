@@ -19,6 +19,7 @@ import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AngularVelocity;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
 import java.util.List;
@@ -214,6 +215,44 @@ public class AutoMode extends RobotParent {
             moveRobot(0, 0, 0);
 
         }
+    }
+    public void driveToDistance(double maxSpeed, double targetDistance, double heading) {
+        final double SPEED_GAIN  =  0.03  ;   //  Forward Speed Control "Gain". e.g. Ramp up to 50% power at a 25 inch error.   (0.50 / 25.0)
+        final double TURN_GAIN   =  0.01  ;   //  Turn Control "Gain".  e.g. Ramp up to 25% power at a 25 degree error. (0.25 / 25.0)
+
+        do {
+            while (opModeIsActive()) {
+                double rangeError = (sensorDistance.getDistance(DistanceUnit.INCH) - targetDistance);
+
+                // If we are close on all axes stop, we need to experiment to find good values
+                if (Math.abs(rangeError) < 1) {
+                    break;
+                }
+
+                // Use the speed and turn "gains" to calculate how we want the robot to move. These are
+                // more values with best guesses that need experimentation to find good values
+                double driveSpeed = 0;
+                double turnSpeed = getSteeringCorrection(heading, TURN_GAIN);
+
+                if (rangeError < 0) {
+                    driveSpeed = Range.clip(rangeError * SPEED_GAIN, -maxSpeed, -0.1);
+                } else {
+                    driveSpeed = Range.clip(rangeError * SPEED_GAIN, 0.1, maxSpeed);
+                }
+                telemetry.addData("Auto", "Drive %5.2f, Turn %5.2f ", driveSpeed, turnSpeed);
+
+                // For debugging let us pause motion to see telemetry
+                if (gamepad1.y) {
+                    moveRobot(0, 0, 0);
+                } else {
+                    moveRobot(driveSpeed, 0, turnSpeed);
+                }
+
+                telemetry.update();
+            }
+        } while (sensorDistance.getDistance(DistanceUnit.INCH) > targetDistance); // if we over shot loop again to back up a bit
+
+        moveRobot(0, 0, 0);
     }
     public void slide(double maxDriveSpeed,
                               double distance,

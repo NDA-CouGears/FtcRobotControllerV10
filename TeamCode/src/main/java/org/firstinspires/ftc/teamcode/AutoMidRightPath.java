@@ -11,6 +11,15 @@ public class AutoMidRightPath extends AutoMode {
         imu.resetYaw();
 
         if (opModeIsActive()) {
+            closeClaw();
+            armUp();
+            driveToDistance(0.3, 23, 0);
+            liftBarUp();
+            driveToDistance(0.2, 7, 0);
+            liftDown();
+            driveToDistance(0.3, -23, 0);
+            turnToHeading(0.3, -90);
+            driveToDistance(0.3, 45, -90);
 
 
 
