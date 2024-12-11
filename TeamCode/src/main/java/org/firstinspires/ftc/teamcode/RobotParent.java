@@ -362,6 +362,12 @@ public abstract class RobotParent extends LinearOpMode {
         armMotor.setPower(0);
     }
 
+    public void liftDownNoWait(){
+        armMotor.setTargetPosition(1);
+        armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        armMotor.setPower(1);
+    }
+
     public void initHardware(){
         leftFrontDrive  = hardwareMap.get(DcMotor.class, "lf_drive");
         leftBackDrive  = hardwareMap.get(DcMotor.class, "lb_drive");

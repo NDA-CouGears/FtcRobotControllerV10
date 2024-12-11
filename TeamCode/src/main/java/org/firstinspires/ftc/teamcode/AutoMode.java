@@ -77,49 +77,7 @@ public class AutoMode extends RobotParent {
     protected void armUp(){
         arm.setPosition(ARM_UP);
     }
-    public double getHeading() {
-        YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
-        return orientation.getYaw(AngleUnit.DEGREES);
-    }
-    public double getSteeringCorrection(double desiredHeading, double proportionalGain) {
-        targetHeading = desiredHeading;  // Save for telemetry
-
-        // Determine the heading current error
-        headingError = targetHeading - getHeading();
-
-        // Normalize the error to be within +/- 180 degrees to avoid wasting time with overly long turns
-        while (headingError > 180)  headingError -= 360;
-        while (headingError <= -180) headingError += 360;
-
-        // Multiply the error by the gain to determine the required steering correction/  Limit the result to +/- 1.0
-        return Range.clip(headingError * proportionalGain, -1, 1);
-    }
     //moveRobot moves the robot (shocking i know). used inside the driveForward and slide methods.
-    public void moveRobot(double x, double y, double yaw) {
-        // Calculate wheel powers.
-        double leftFrontPower    =  x -y -yaw;
-        double rightFrontPower   =  x +y +yaw;
-        double leftBackPower     =  x +y -yaw;
-        double rightBackPower    =  x -y +yaw;
-
-        // Normalize wheel powers to be less than 1.0
-        double max = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));
-        max = Math.max(max, Math.abs(leftBackPower));
-        max = Math.max(max, Math.abs(rightBackPower));
-
-        if (max > 1.0) {
-            leftFrontPower /= max;
-            rightFrontPower /= max;
-            leftBackPower /= max;
-            rightBackPower /= max;
-        }
-
-        // Send powers to the wheels.
-        leftFrontDrive.setPower(leftFrontPower);
-        rightFrontDrive.setPower(rightFrontPower);
-        leftBackDrive.setPower(leftBackPower);
-        rightBackDrive.setPower(rightBackPower);
-    }
     public void turnToHeading(double maxTurnSpeed, double heading) {
         leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         leftBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -216,44 +174,6 @@ public class AutoMode extends RobotParent {
 
         }
     }
-    public void driveToDistance(double maxSpeed, double targetDistance, double heading) {
-        final double SPEED_GAIN  =  0.03  ;   //  Forward Speed Control "Gain". e.g. Ramp up to 50% power at a 25 inch error.   (0.50 / 25.0)
-        final double TURN_GAIN   =  0.01  ;   //  Turn Control "Gain".  e.g. Ramp up to 25% power at a 25 degree error. (0.25 / 25.0)
-
-        do {
-            while (opModeIsActive()) {
-                double rangeError = (sensorDistance.getDistance(DistanceUnit.INCH) - targetDistance);
-
-                // If we are close on all axes stop, we need to experiment to find good values
-                if (Math.abs(rangeError) < 1) {
-                    break;
-                }
-
-                // Use the speed and turn "gains" to calculate how we want the robot to move. These are
-                // more values with best guesses that need experimentation to find good values
-                double driveSpeed = 0;
-                double turnSpeed = getSteeringCorrection(heading, TURN_GAIN);
-
-                if (rangeError < 0) {
-                    driveSpeed = Range.clip(rangeError * SPEED_GAIN, -maxSpeed, -0.1);
-                } else {
-                    driveSpeed = Range.clip(rangeError * SPEED_GAIN, 0.1, maxSpeed);
-                }
-                telemetry.addData("Auto", "Drive %5.2f, Turn %5.2f ", driveSpeed, turnSpeed);
-
-                // For debugging let us pause motion to see telemetry
-                if (gamepad1.y) {
-                    moveRobot(0, 0, 0);
-                } else {
-                    moveRobot(driveSpeed, 0, turnSpeed);
-                }
-
-                telemetry.update();
-            }
-        } while (sensorDistance.getDistance(DistanceUnit.INCH) > targetDistance); // if we over shot loop again to back up a bit
-
-        moveRobot(0, 0, 0);
-    }
     public void slide(double maxDriveSpeed,
                               double distance,
                               double heading) {
@@ -323,11 +243,7 @@ public class AutoMode extends RobotParent {
         armMotor.setPower(1);
 
     }
-    public void liftDownNoWait(){
-        armMotor.setTargetPosition(1);
-        armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        armMotor.setPower(1);
-    }
+
     public void waitForLift(){
         while (opModeIsActive() && armMotor.isBusy()) {
             //idle();
