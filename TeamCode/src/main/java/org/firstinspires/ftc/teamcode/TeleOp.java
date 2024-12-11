@@ -156,6 +156,15 @@ public class TeleOp extends RobotParent {
         }
     }
 
+    protected void hookSample(){
+        if (gamepad1.x){
+            driveToDistance(0.4, 9, 0);
+            liftBarUp();
+            driveToDistance(0.4, 6, 0);
+            liftDown();
+        }
+    }
+
     @Override
     public void runOpMode() {
 
@@ -184,6 +193,9 @@ public class TeleOp extends RobotParent {
 
             //second arm (the one that picks up specimens)
             elbowDrive();
+
+            //hooks sample on higher bar
+            hookSample();
 
             telemetry.update();
         }

@@ -296,16 +296,6 @@ public class AutoMode extends RobotParent {
         moveRobot(0, 0, 0);
 
     }
-    public void liftBarUp(){
-        armMotor.setTargetPosition(1950);
-        armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        armMotor.setPower(1);
-
-        while (opModeIsActive() && armMotor.isBusy()) {
-            idle();
-        }
-        armMotor.setPower(0);
-    }
     public void liftLowerBasket(){
         armMotor.setTargetPosition(2000);
         armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -332,16 +322,6 @@ public class AutoMode extends RobotParent {
         armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         armMotor.setPower(1);
 
-    }
-    public void liftDown(){
-        armMotor.setTargetPosition(1);
-        armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        armMotor.setPower(1);
-
-        while (opModeIsActive() && armMotor.isBusy()) {
-            idle();
-        }
-        armMotor.setPower(0);
     }
     public void liftDownNoWait(){
         armMotor.setTargetPosition(1);
