@@ -370,6 +370,7 @@ public abstract class RobotParent extends LinearOpMode {
 
         claw = hardwareMap.get(Servo.class, "claw");
         arm = hardwareMap.get(Servo.class, "arm");
+        arm.setPosition(ARM_UP);
 
         armMotor = hardwareMap.get(DcMotor.class, "lift");
 
