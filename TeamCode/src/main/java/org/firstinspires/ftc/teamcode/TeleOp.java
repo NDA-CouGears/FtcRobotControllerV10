@@ -117,9 +117,7 @@ public class TeleOp extends RobotParent {
                         idle();
                     }
 
-
                     armMotor.setPower(0);
-
                 }
             } else {
                 if ((touchSensor.isPressed()) && (armMotorPower < 0)) {
@@ -128,7 +126,9 @@ public class TeleOp extends RobotParent {
                 } else {
                     armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                     lift_hold_pos = armMotor.getCurrentPosition();
-                    armMotor.setPower(armMotorPower);
+                    if (lift_hold_pos < 5000) {
+                        armMotor.setPower(armMotorPower);
+                    }
                 }
             }
 
@@ -153,6 +153,10 @@ public class TeleOp extends RobotParent {
             arm.setPosition(ARM_DOWN);
         } else if (gamepad2.dpad_up) {
             arm.setPosition(ARM_UP);
+        } else if (gamepad2.dpad_right) {
+            arm.setPosition(ARM_DOWN*0.9);
+        } else if (gamepad2.dpad_left) {
+            arm.setPosition(ARM_DOWN*0.8);
         }
     }
 
@@ -169,6 +173,11 @@ public class TeleOp extends RobotParent {
     public void runOpMode() {
 
         initHardware();
+
+        leftBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        rightBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        leftFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        rightFrontDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
         waitForStart();
 
