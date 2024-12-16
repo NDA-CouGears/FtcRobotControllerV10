@@ -34,8 +34,8 @@ public abstract class RobotParent extends LinearOpMode {
 
     protected DistanceSensor sensorDistance = null;
 
-    final protected static double ClawClosed = 0.5;
-    final protected static double ClawOpen = 0.18;
+    final protected static double ClawClosed = 0.68;
+    final protected static double ClawOpen = 0.31;
 
     protected Servo secondArm = null; //this arm is the one that picks up specimens
 
