@@ -305,6 +305,11 @@ public abstract class RobotParent extends LinearOpMode {
         final double SPEED_GAIN  =  0.03  ;   //  Forward Speed Control "Gain". e.g. Ramp up to 50% power at a 25 inch error.   (0.50 / 25.0)
         final double TURN_GAIN   =  0.01  ;   //  Turn Control "Gain".  e.g. Ramp up to 25% power at a 25 degree error. (0.25 / 25.0)
 
+        leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
         do {
             while (opModeIsActive()) {
                 double rangeError = (sensorDistance.getDistance(DistanceUnit.INCH) - targetDistance);
@@ -324,7 +329,7 @@ public abstract class RobotParent extends LinearOpMode {
                 } else {
                     driveSpeed = Range.clip(rangeError * SPEED_GAIN, 0.1, maxSpeed);
                 }
-                telemetry.addData("Auto", "Drive %5.2f, Turn %5.2f ", driveSpeed, turnSpeed);
+                telemetry.addData("Auto DTD", "Drive %5.2f, Turn %5.2f ", driveSpeed, turnSpeed);
 
                 // For debugging let us pause motion to see telemetry
                 if (gamepad1.y) {
