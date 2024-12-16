@@ -4,6 +4,7 @@ import android.util.Size;
 
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.Range;
 import com.qualcomm.robotcore.util.SortOrder;
@@ -27,6 +28,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
+@Disabled
 @TeleOp( name = "Vision", group = "Examples")
 public class VisionExampleOpMode extends AutoMode {
     private WebcamName forward_cam, downward_cam;
