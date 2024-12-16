@@ -113,8 +113,12 @@ public class TeleOp extends RobotParent {
                     armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                     armMotor.setPower(1);
 
-                    while (opModeIsActive() && armMotor.isBusy() && (Math.abs(gamepad2.left_stick_y) < 0.1)) {
+                    while (opModeIsActive() && armMotor.isBusy() && (Math.abs(gamepad2.right_stick_y) < 0.1)) {
                         idle();
+                        telemetry.addLine("In Loop");
+                        telemetry.addData("Motor power: ", armMotor.getPower());
+                        telemetry.addData("Motor position: ", armMotor.getCurrentPosition());
+                        telemetry.update();
                     }
 
                     armMotor.setPower(0);

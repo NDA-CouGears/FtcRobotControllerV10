@@ -27,12 +27,12 @@ public class AutoLeftPath extends AutoMode {
             //gets first block; puts in higher basket
             turnToHeading(0.4, -3);
             armSetPosition(.75, 0);
-            driveStraight(0.4, 15, -3);
+            driveStraight(0.4, 14, -3);
             turnToHeading(0.4, -3);
             armSetPosition(1,600);
             closeClaw();
             armUp();
-            driveStraight(0.4, -14, -3);
+            driveStraight(0.4, -13, -3);
             turnToHeading(0.4, 120);
             liftHigherBasketNoWait();
             waitForLift();
