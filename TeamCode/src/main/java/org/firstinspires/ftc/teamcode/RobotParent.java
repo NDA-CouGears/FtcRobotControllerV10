@@ -350,6 +350,7 @@ public abstract class RobotParent extends LinearOpMode {
         armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         armMotor.setPower(1);
 
+        clearBulkCache();
         while (opModeIsActive() && armMotor.isBusy()) {
             idle();
         }
