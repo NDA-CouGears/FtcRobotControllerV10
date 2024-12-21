@@ -311,7 +311,7 @@ public abstract class RobotParent extends LinearOpMode {
         rightBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         do {
-            while (opModeIsActive()) {
+            while (opModeIsActive() && !gamepad1.y) {
                 double rangeError = (sensorDistance.getDistance(DistanceUnit.INCH) - targetDistance);
 
                 // If we are close on all axes stop, we need to experiment to find good values
@@ -340,7 +340,7 @@ public abstract class RobotParent extends LinearOpMode {
 
                 telemetry.update();
             }
-        } while (sensorDistance.getDistance(DistanceUnit.INCH) > targetDistance); // if we over shot loop again to back up a bit
+        } while (sensorDistance.getDistance(DistanceUnit.INCH) > targetDistance && !gamepad1.y); // if we over shot loop again to back up a bit
 
         moveRobot(0, 0, 0);
     }
@@ -351,7 +351,7 @@ public abstract class RobotParent extends LinearOpMode {
         armMotor.setPower(1);
 
         clearBulkCache();
-        while (opModeIsActive() && armMotor.isBusy()) {
+        while (opModeIsActive() && armMotor.isBusy() && !gamepad1.y) {
             idle();
         }
         armMotor.setPower(0);
