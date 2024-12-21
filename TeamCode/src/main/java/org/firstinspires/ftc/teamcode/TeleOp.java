@@ -117,6 +117,7 @@ public class TeleOp extends RobotParent {
                     while (opModeIsActive() && armMotor.isBusy() && (Math.abs(gamepad2.right_stick_y) < 0.1)) {
                         idle();
                         mecanumDrive();
+                        clawDrive();
                         telemetry.addLine("In Loop");
                         telemetry.addData("Motor power: ", armMotor.getPower());
                         telemetry.addData("Motor position: ", armMotor.getCurrentPosition());
@@ -160,9 +161,9 @@ public class TeleOp extends RobotParent {
         } else if (gamepad2.dpad_up) {
             arm.setPosition(ARM_UP);
         } else if (gamepad2.dpad_right) {
-            arm.setPosition(ARM_DOWN*0.9);
+            arm.setPosition(ARM_DOWN*0.95);
         } else if (gamepad2.dpad_left) {
-            arm.setPosition(ARM_DOWN*0.8);
+            arm.setPosition(ARM_DOWN*0.9);
         }
     }
 

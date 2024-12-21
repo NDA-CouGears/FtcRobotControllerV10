@@ -45,7 +45,7 @@ public class AutoLeftPath extends AutoMode {
             turnToHeading(0.4, 0);
             armSetPosition(0.75, 0);
             driveStraight(0.4, 13, 0);
-            slide(0.2, 8, 0);
+            slide(0.2, 9, 0);
             turnToHeading(0.4, 0);
             armSetPosition(1, 600);
             closeClaw();

@@ -39,8 +39,8 @@ public abstract class RobotParent extends LinearOpMode {
 
     protected Servo secondArm = null; //this arm is the one that picks up specimens
 
-    public static double ARM_UP = 0.14;
-    public static double ARM_DOWN = 0.68;
+    public static double ARM_UP = 0.225;
+    public static double ARM_DOWN = 0.655;
 
     static final double DRIVE_GEAR_REDUCTION = 1.0;
     static final double WHEEL_DIAMETER_INCHES = 102/25.4;
