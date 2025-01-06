@@ -242,7 +242,7 @@ public class VisionExampleOpMode extends AutoMode {
 
             // Determine heading, range and Yaw (tag image rotation) error so we can use them to
             // control the robot automatically.
-            double rangeError = (sensorDistance.getDistance(DistanceUnit.INCH) - tagTargetDistance);
+            double rangeError = (desiredTag.ftcPose.range - tagTargetDistance);
             double headingError = desiredTag.ftcPose.bearing;
             double yawError = desiredTag.ftcPose.yaw;
 

@@ -15,25 +15,26 @@ public class AutoLeftPath extends AutoMode {
             armUp();
             closeClaw();
             liftHigherBasketNoWait();
-            driveStraight(0.4, 4, 0);
-            turnToHeading(0.4, 90);
-            driveStraight(0.4, 12, 90);
-            turnToHeading(0.4, 120);
+            slide(0.4, -4, 0);
+            //driveStraight(0.4, 4, 0);
+            //turnToHeading(0.4, 90);
+            driveToDistance(0.4, 11.5, 0);
+            turnToHeading(0.4, 30);
             waitForLift();
             armBasketDown();
             openClaw();
             armUp();
             liftDownNoWait();
             //gets first block; puts in higher basket
-            turnToHeading(0.4, -3);
-            armSetPosition(.75, 500);
-            driveStraight(0.4, 14, -3);
-            turnToHeading(0.4, -3);
-            armSetPosition(1,600);
+            turnToHeading(0.4, -93);
+            armSetPosition(1, 600);
+            driveStraight(0.4, 14, -93);
+            turnToHeading(0.4, -93);
+            //armSetPosition(1,3000);
             closeClaw();
             armUp();
-            driveStraight(0.4, -13, -3);
-            turnToHeading(0.4, 120);
+            driveStraight(0.4, -13, -93);
+            turnToHeading(0.4, 30);
             liftHigherBasketNoWait();
             waitForLift();
             armBasketDown();
@@ -42,28 +43,28 @@ public class AutoLeftPath extends AutoMode {
             sleep(100);
             liftDownNoWait();
             //gets second block; puts in higher basket
-            turnToHeading(0.4, 0);
+            turnToHeading(0.4, -90);
             armSetPosition(0.75, 500);
-            driveStraight(0.4, 13, 0);
-            slide(0.2, 9, 0);
-            turnToHeading(0.4, 0);
+            driveStraight(0.4, 13, -90);
+            slide(0.2, 9, -90);
+            turnToHeading(0.4, -90);
             armSetPosition(1, 600);
             closeClaw();
             armUp();
             liftHigherBasketNoWait();
-            slide(0.2, -8, 0);
-            driveStraight(0.4, -15, -8);
-            turnToHeading(0.4, 125);
+            slide(0.2, -8, -90);
+            driveStraight(0.4, -15, -98);
+            turnToHeading(0.4, 35);
             waitForLift();
             armBasketDown();
             openClaw();
             armUp();
             sleep(100);
             liftDownNoWait();
-            turnToHeading(0.4,0);
-            slide(0.4, -13.5,0);
-            driveStraight(0.4, 49, 0);
-            slide(0.4, -1,0);
+            turnToHeading(0.4,-90);
+            slide(0.4, -13.5,-90);
+            driveStraight(0.4, 49, -90);
+            slide(0.4, -1,-90);
 
             
         }
