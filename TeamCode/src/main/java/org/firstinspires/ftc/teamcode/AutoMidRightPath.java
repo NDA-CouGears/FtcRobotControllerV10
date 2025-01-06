@@ -18,7 +18,7 @@ public class AutoMidRightPath extends AutoMode {
             // Drive lose the the submersible
             driveToDistance(0.4, 9, 0);
             // Lift sample to above second bar height
-            liftBarUp();
+            liftBarUpNoWait();
             // Drive until sample is over second bar
             driveToDistance(0.4, 6, 0);
             // Lock the sample onto the bar
