@@ -10,7 +10,13 @@ public class AutoMiddlePath extends AutoMode {
         imu.resetYaw();
 
         if (opModeIsActive()) {
-            closeClaw();
+            driveToDistance( 0.2, 0, 10, 0, false, false);
+            sleep(5000);
+            driveToDistance(0.2, 20, 20, 0, true, false);
+            sleep(5000);
+
+
+            /*closeClaw();
             armUp();
             driveStraight(0.3, 23, 0);
             liftBarUp();
@@ -19,6 +25,7 @@ public class AutoMiddlePath extends AutoMode {
             driveStraight(0.3, -23, 0);
             turnToHeading(0.3, -90);
             driveStraight(0.3, 45, -90);
+             */
         }
         while (opModeIsActive()) {
             telemetry.addLine("after turn");

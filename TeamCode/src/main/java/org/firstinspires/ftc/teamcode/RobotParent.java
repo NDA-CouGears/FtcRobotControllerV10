@@ -298,52 +298,64 @@ public abstract class RobotParent extends LinearOpMode {
     }
 
     public void driveToDistance(double maxSpeed, double targetDistance, double heading) {
-        driveToDistance(maxSpeed, targetDistance, heading, false);
+        driveToDistance(maxSpeed, targetDistance, 0, heading, false, false);
     }
 
-    public void driveToDistance(double maxSpeed, double targetDistance, double heading, boolean backwards) {
+    public void driveToDistance(double maxSpeed, double targetForwardDistance, double targetLateralDistance, double heading, boolean backwards, boolean left) {
         final double SPEED_GAIN = 0.03;   //  Forward Speed Control "Gain". e.g. Ramp up to 50% power at a 25 inch error.   (0.50 / 25.0)
         final double TURN_GAIN = 0.01;   //  Turn Control "Gain".  e.g. Ramp up to 25% power at a 25 degree error. (0.25 / 25.0)
 
-        DistanceSensor localSensor = backwards ? sensorBackDistance : sensorFrontDistance;
+        DistanceSensor localForwardSensor = backwards ? sensorBackDistance : sensorFrontDistance;
+        DistanceSensor localLateralSensor = left ? sensorLeftDistance : sensorRightDistance;
 
         leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         leftBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        do {
+//        do {
             while (opModeIsActive() && !gamepad1.y) {
 
-                double rangeError = (localSensor.getDistance(DistanceUnit.INCH) - targetDistance);
+                double rangeErrorForward = targetForwardDistance == 0 ? 0
+                        : (localForwardSensor.getDistance(DistanceUnit.INCH) - targetForwardDistance);
+                double rangeErrorLateral = targetLateralDistance == 0 ? 0
+                        : (localLateralSensor.getDistance(DistanceUnit.INCH) - targetLateralDistance);
 
                 // If we are close on all axes stop, we need to experiment to find good values
-                if (Math.abs(rangeError) < 1) {
+                if (Math.abs(rangeErrorForward) < 1 && Math.abs(rangeErrorLateral) < 1) {
                     break;
                 }
 
                 // Use the speed and turn "gains" to calculate how we want the robot to move. These are
                 // more values with best guesses that need experimentation to find good values
-                double driveSpeed = 0;
+                double forwardDriveSpeed = 0;
+                double lateralDriveSpeed = 0;
                 double turnSpeed = getSteeringCorrection(heading, TURN_GAIN);
 
-                if (rangeError < 0) {
-                    driveSpeed = Range.clip(rangeError * SPEED_GAIN, -maxSpeed, -0.1);
-                } else {
-                    driveSpeed = Range.clip(rangeError * SPEED_GAIN, 0.1, maxSpeed);
+                if ( rangeErrorForward < 0 ) {
+                    forwardDriveSpeed = Range.clip(rangeErrorForward * SPEED_GAIN, -maxSpeed, -0.1);
                 }
-                telemetry.addData("Auto DTD", "Drive %5.2f, Turn %5.2f ", driveSpeed, turnSpeed);
+                else if ( rangeErrorForward > 0 ) {
+                    forwardDriveSpeed = Range.clip(rangeErrorForward * SPEED_GAIN, 0.1, maxSpeed);
+                }
+                if ( rangeErrorLateral < 0 ) {
+                    lateralDriveSpeed = Range.clip(rangeErrorLateral * SPEED_GAIN, -maxSpeed, -0.1);
+                } else if ( rangeErrorLateral > 0 ){
+                    lateralDriveSpeed = Range.clip(rangeErrorLateral * SPEED_GAIN, 0.1, maxSpeed);
+                }
+                telemetry.addData("Auto DTD", "Drive %5.2f Lateral %5.2f Turn %5.2f ", forwardDriveSpeed, lateralDriveSpeed, turnSpeed);
 
                 // For debugging let us pause motion to see telemetry
                 if (gamepad1.y) {
                     moveRobot(0, 0, 0);
                 } else {
-                    moveRobot(backwards ? -driveSpeed : driveSpeed, 0, turnSpeed);
+                    moveRobot(backwards ? -forwardDriveSpeed : forwardDriveSpeed,
+                            left ? lateralDriveSpeed : -lateralDriveSpeed, turnSpeed);
                 }
 
                 telemetry.update();
             }
-        } while (opModeIsActive() && localSensor.getDistance(DistanceUnit.INCH) > targetDistance && !gamepad1.y); // if we over shot loop again to back up a bit
+//        } while (opModeIsActive() && localForwardSensor.getDistance(DistanceUnit.INCH) > targetForwardDistance && !gamepad1.y); // if we over shot loop again to back up a bit
 
         moveRobot(0, 0, 0);
     }
