@@ -57,11 +57,9 @@ import org.firstinspires.ftc.vision.opencv.PredominantColorProcessor;
 
 @Disabled
 @TeleOp(name = "Concept: Vision Color-Sensor", group = "Concept")
-public class ConceptVisionColorSensor extends LinearOpMode
-{
+public class ConceptVisionColorSensor extends LinearOpMode {
     @Override
-    public void runOpMode()
-    {
+    public void runOpMode() {
         /* Build a "Color Sensor" vision processor based on the PredominantColorProcessor class.
          *
          * - Focus the color sensor by defining a RegionOfInterest (ROI) which you want to inspect.
@@ -114,8 +112,7 @@ public class ConceptVisionColorSensor extends LinearOpMode
         telemetry.setMsTransmissionInterval(50);  // Speed up telemetry updates, Just use for debugging.
 
         // WARNING:  To be able to view the stream preview on the Driver Station, this code runs in INIT mode.
-        while (opModeIsActive() || opModeInInit())
-        {
+        while (opModeIsActive() || opModeInInit()) {
             telemetry.addData("DS preview on/off", "3 dots, Camera Stream\n");
 
             // Request the most recent color analysis.

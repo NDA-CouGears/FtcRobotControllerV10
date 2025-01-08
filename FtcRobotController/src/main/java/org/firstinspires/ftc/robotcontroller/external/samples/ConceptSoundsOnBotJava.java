@@ -60,13 +60,13 @@ import java.io.File;
  *      https://github.com/ftctechnh/ftc_app/tree/master/FtcRobotController/src/main/res/raw/silver.wav
  */
 
-@TeleOp(name="Concept: Sound Files", group="Concept")
+@TeleOp(name = "Concept: Sound Files", group = "Concept")
 @Disabled
 public class ConceptSoundsOnBotJava extends LinearOpMode {
 
     // Point to sound files on the phone's drive
     private String soundPath = "/FIRST/blocks/sounds";
-    private File goldFile   = new File("/sdcard" + soundPath + "/gold.wav");
+    private File goldFile = new File("/sdcard" + soundPath + "/gold.wav");
     private File silverFile = new File("/sdcard" + soundPath + "/silver.wav");
 
     // Declare OpMode members.
@@ -80,12 +80,12 @@ public class ConceptSoundsOnBotJava extends LinearOpMode {
     public void runOpMode() {
 
         // Make sure that the sound files exist on the phone
-        boolean goldFound   = goldFile.exists();
+        boolean goldFound = goldFile.exists();
         boolean silverFound = silverFile.exists();
 
         // Display sound status
-        telemetry.addData("gold sound",   goldFound ?   "Found" : "NOT Found \nCopy gold.wav to " + soundPath  );
-        telemetry.addData("silver sound", silverFound ? "Found" : "NOT Found \nCopy silver.wav to " + soundPath );
+        telemetry.addData("gold sound", goldFound ? "Found" : "NOT Found \nCopy gold.wav to " + soundPath);
+        telemetry.addData("silver sound", silverFound ? "Found" : "NOT Found \nCopy silver.wav to " + soundPath);
 
         // Wait for the game to start (driver presses PLAY)
         telemetry.addData(">", "Press Start to continue");

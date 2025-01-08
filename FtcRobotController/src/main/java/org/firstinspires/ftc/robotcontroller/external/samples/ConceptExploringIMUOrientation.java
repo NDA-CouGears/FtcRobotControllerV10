@@ -37,6 +37,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.IMU;
+
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AngularVelocity;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
@@ -69,7 +70,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
  * The rotational velocities should follow the change in corresponding axes.
  */
 
-@TeleOp(name="Concept: IMU Orientation", group="Concept")
+@TeleOp(name = "Concept: IMU Orientation", group = "Concept")
 @Disabled
 public class ConceptExploringIMUOrientation extends LinearOpMode {
     static RevHubOrientationOnRobot.LogoFacingDirection[] logoFacingDirections
@@ -84,7 +85,8 @@ public class ConceptExploringIMUOrientation extends LinearOpMode {
     int usbFacingDirectionPosition;
     boolean orientationIsValid = true;
 
-    @Override public void runOpMode() throws InterruptedException {
+    @Override
+    public void runOpMode() throws InterruptedException {
         imu = hardwareMap.get(IMU.class, "imu");
         logoFacingDirectionPosition = 0; // Up
         usbFacingDirectionPosition = 2; // Forward

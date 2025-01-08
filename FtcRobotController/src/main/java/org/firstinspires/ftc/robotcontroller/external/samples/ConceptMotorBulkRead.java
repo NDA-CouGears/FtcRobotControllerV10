@@ -79,15 +79,15 @@ import java.util.List;
  * Once you put all your sensor reads at the beginning of the control cycle, it's very easy to use
  * the bulk-read AUTO mode to streamline your cycle timing.
  */
-@TeleOp (name = "Motor Bulk Reads", group = "Tests")
+@TeleOp(name = "Motor Bulk Reads", group = "Tests")
 @Disabled
 public class ConceptMotorBulkRead extends LinearOpMode {
 
-    final int       TEST_CYCLES    = 500;   // Number of control cycles to run to determine cycle times.
+    final int TEST_CYCLES = 500;   // Number of control cycles to run to determine cycle times.
 
     private DcMotorEx m1, m2, m3, m4; // Motor Objects
-    private long      e1, e2, e3, e4; // Encoder Values
-    private double    v1, v2, v3, v4; // Velocities
+    private long e1, e2, e3, e4; // Encoder Values
+    private double v1, v2, v3, v4; // Velocities
 
     // Cycle Times
     double t1 = 0;
@@ -218,8 +218,8 @@ public class ConceptMotorBulkRead extends LinearOpMode {
     // Display three comparison times.
     void displayCycleTimes(String status) {
         telemetry.addData("Testing", status);
-        telemetry.addData("Cache = OFF",    "%5.1f mS/cycle", t1);
-        telemetry.addData("Cache = AUTO",   "%5.1f mS/cycle", t2);
+        telemetry.addData("Cache = OFF", "%5.1f mS/cycle", t1);
+        telemetry.addData("Cache = AUTO", "%5.1f mS/cycle", t2);
         telemetry.addData("Cache = MANUAL", "%5.1f mS/cycle", t3);
         telemetry.update();
     }

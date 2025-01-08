@@ -87,9 +87,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  */
 
 @Disabled
-@TeleOp(name="Concept: Gamepad Rumble", group ="Concept")
-public class ConceptGamepadRumble extends LinearOpMode
-{
+@TeleOp(name = "Concept: Gamepad Rumble", group = "Concept")
+public class ConceptGamepadRumble extends LinearOpMode {
     boolean lastA = false;                      // Use to track the prior button state.
     boolean lastLB = false;                     // Use to track the prior button state.
     boolean highLevel = false;                  // used to prevent multiple level-based rumbles.
@@ -99,11 +98,10 @@ public class ConceptGamepadRumble extends LinearOpMode
     ElapsedTime runtime = new ElapsedTime();    // Use to determine when end game is starting.
 
     final double HALF_TIME = 60.0;              // Wait this many seconds before rumble-alert for half-time.
-    final double TRIGGER_THRESHOLD  = 0.75;     // Squeeze more than 3/4 to get rumble.
+    final double TRIGGER_THRESHOLD = 0.75;     // Squeeze more than 3/4 to get rumble.
 
     @Override
-    public void runOpMode()
-    {
+    public void runOpMode() {
         // Example 1. a)   start by creating a three-pulse rumble sequence: right, LEFT, LEFT
         customRumbleEffect = new Gamepad.RumbleEffect.Builder()
                 .addStep(0.0, 1.0, 500)  //  Rumble right motor 100% for 500 mSec
@@ -120,27 +118,26 @@ public class ConceptGamepadRumble extends LinearOpMode
         runtime.reset();    // Start game timer.
 
         // Loop while monitoring buttons for rumble triggers
-        while (opModeIsActive())
-        {
+        while (opModeIsActive()) {
             // Read and save the current gamepad button states.
-            boolean currentA = gamepad1.a ;
-            boolean currentLB = gamepad1.left_bumper ;
+            boolean currentA = gamepad1.a;
+            boolean currentLB = gamepad1.left_bumper;
 
             // Display the current Rumble status.  Just for interest.
-            telemetry.addData(">", "Are we RUMBLING? %s\n", gamepad1.isRumbling() ? "YES" : "no" );
+            telemetry.addData(">", "Are we RUMBLING? %s\n", gamepad1.isRumbling() ? "YES" : "no");
 
             // ----------------------------------------------------------------------------------------
             // Example 1. b) Watch the runtime timer, and run the custom rumble when we hit half-time.
             //               Make sure we only signal once by setting "secondHalf" flag to prevent further rumbles.
             // ----------------------------------------------------------------------------------------
-            if ((runtime.seconds() > HALF_TIME) && !secondHalf)  {
+            if ((runtime.seconds() > HALF_TIME) && !secondHalf) {
                 gamepad1.runRumbleEffect(customRumbleEffect);
-                secondHalf =true;
+                secondHalf = true;
             }
 
             // Display the time remaining while we are still counting down.
             if (!secondHalf) {
-                telemetry.addData(">", "Halftime Alert Countdown: %3.0f Sec \n", (HALF_TIME - runtime.seconds()) );
+                telemetry.addData(">", "Halftime Alert Countdown: %3.0f Sec \n", (HALF_TIME - runtime.seconds()));
             }
 
 

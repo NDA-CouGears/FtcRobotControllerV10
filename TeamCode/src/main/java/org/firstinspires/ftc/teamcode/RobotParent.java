@@ -47,30 +47,29 @@ public abstract class RobotParent extends LinearOpMode {
     public static double ARM_DOWN = 0.655;
 
     static final double DRIVE_GEAR_REDUCTION = 1.0;
-    static final double WHEEL_DIAMETER_INCHES = 102/25.4;
+    static final double WHEEL_DIAMETER_INCHES = 102 / 25.4;
     static final double COUNTS_PER_MOTOR_REV = 483.3836858;  //NEED TO FIX DIS >:3
     static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_INCHES * 3.14159);
     static final double DRIVE_SPEED = 0.2;
-    static final double SLIDE_COUNTS_PER_INCH = COUNTS_PER_INCH/0.7251;
+    static final double SLIDE_COUNTS_PER_INCH = COUNTS_PER_INCH / 0.7251;
 
-    public double  targetHeading = 0;
-    public double  headingError  = 0;
-    public double  turnSpeed     = 0;
+    public double targetHeading = 0;
+    public double headingError = 0;
+    public double turnSpeed = 0;
 
     public IMU imu = null;// Control/Expansion Hub IMU
 
     static final double P_DRIVE_GAIN = 0.03;// Larger is more responsive, but also less stable.
-    static final double P_TURN_GAIN  = 0.02;// Larger is more responsive, but also less stable.
+    static final double P_TURN_GAIN = 0.02;// Larger is more responsive, but also less stable.
 
-    static final double HEADING_THRESHOLD = 1.0 ;// How close must the heading get to the target before moving to next step.
+    static final double HEADING_THRESHOLD = 1.0;// How close must the heading get to the target before moving to next step.
 
 
     private double signPreserveSquare(double value) {
 
         if (value > 0) {
             return value * value;
-        }
-        else {
+        } else {
             return -(value * value);
         }
     }
@@ -151,19 +150,19 @@ public abstract class RobotParent extends LinearOpMode {
         }
     }
 
-    protected void mDrive(){
+    protected void mDrive() {
         double max;
         // POV Mode uses left joystick to go forward & strafe, and right joystick to rotate.
-        double axial = signPreserveSquare(gamepad1.left_stick_y*-0.9); // Remember, this is reversed!
+        double axial = signPreserveSquare(gamepad1.left_stick_y * -0.9); // Remember, this is reversed!
         double lateral = signPreserveSquare(gamepad1.left_stick_x * 0.7); // Counteract imperfect strafing
-        double yaw = (signPreserveSquare(gamepad1.right_stick_x * 1))*0.5;
+        double yaw = (signPreserveSquare(gamepad1.right_stick_x * 1)) * 0.5;
 
         // Combine the joystick requests for each axis-motion to determine each wheel's power.
         // Set up a variable for each drive wheel to save the power level for telemetry.
-        double leftFrontPower  = axial + lateral + yaw;
+        double leftFrontPower = axial + lateral + yaw;
         double rightFrontPower = axial - lateral - yaw;
-        double leftBackPower   = axial - lateral + yaw;
-        double rightBackPower  = axial + lateral - yaw;
+        double leftBackPower = axial - lateral + yaw;
+        double rightBackPower = axial + lateral - yaw;
 
         // Normalize the values so no wheel power exceeds 100%
         // This ensures that the robot maintains the desired motion.
@@ -172,10 +171,10 @@ public abstract class RobotParent extends LinearOpMode {
         max = Math.max(max, Math.abs(rightBackPower));
 
         if (max > 1.0) {
-            leftFrontPower  /= max;
+            leftFrontPower /= max;
             rightFrontPower /= max;
-            leftBackPower   /= max;
-            rightBackPower  /= max;
+            leftBackPower /= max;
+            rightBackPower /= max;
         }
 
         // Send calculated power to wheels
@@ -190,14 +189,13 @@ public abstract class RobotParent extends LinearOpMode {
         int rbp = rightBackDrive.getCurrentPosition();
     }
 
-    protected void arm(){
+    protected void arm() {
         boolean holdingAtA = false;
         boolean holdingAtB = false;
-        if (gamepad2.y){
+        if (gamepad2.y) {
             holdingAtA = false;
             holdingAtB = false;
-        }
-        else if ((gamepad2.a) || (holdingAtA)) {
+        } else if ((gamepad2.a) || (holdingAtA)) {
             armMotor.setTargetPosition(2000);
             armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             armMotor.setPower(1);
@@ -210,8 +208,7 @@ public abstract class RobotParent extends LinearOpMode {
             if (!gamepad2.y) {
                 holdingAtA = true;
             }
-        }
-        else if ((gamepad2.b) || (holdingAtB)) {
+        } else if ((gamepad2.b) || (holdingAtB)) {
             armMotor.setTargetPosition(4700);
             armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             armMotor.setPower(1);
@@ -221,19 +218,16 @@ public abstract class RobotParent extends LinearOpMode {
             }
 
             armMotor.setPower(0);
-            if (!gamepad2.y){
+            if (!gamepad2.y) {
                 holdingAtB = true;
             }
-        }
-        else {
+        } else {
             double armMotorPower = -gamepad2.right_stick_y;
             armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
             if ((touchSensor.isPressed()) && (armMotorPower < 0)) {
                 armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            }
-
-            else {
+            } else {
                 armMotor.setPower(armMotorPower);
             }
 
@@ -242,13 +236,11 @@ public abstract class RobotParent extends LinearOpMode {
         }
     }
 
-    protected void claw(){
+    protected void claw() {
         //pressing right bumper opens claw, left bumper closes claw
-        if (gamepad2.right_bumper){
+        if (gamepad2.right_bumper) {
             claw.setPosition(ClawOpen);
-        }
-
-        else if (gamepad2.left_bumper){
+        } else if (gamepad2.left_bumper) {
             claw.setPosition(ClawClosed);
         }
     }
@@ -262,10 +254,10 @@ public abstract class RobotParent extends LinearOpMode {
 
     public void moveRobot(double x, double y, double yaw) {
         // Calculate wheel powers.
-        double leftFrontPower    =  x -y -yaw;
-        double rightFrontPower   =  x +y +yaw;
-        double leftBackPower     =  x +y -yaw;
-        double rightBackPower    =  x -y +yaw;
+        double leftFrontPower = x - y - yaw;
+        double rightFrontPower = x + y + yaw;
+        double leftBackPower = x + y - yaw;
+        double rightBackPower = x - y + yaw;
 
         // Normalize wheel powers to be less than 1.0
         double max = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));
@@ -298,7 +290,7 @@ public abstract class RobotParent extends LinearOpMode {
         headingError = targetHeading - getHeading();
 
         // Normalize the error to be within +/- 180 degrees to avoid wasting time with overly long turns
-        while (headingError > 180)  headingError -= 360;
+        while (headingError > 180) headingError -= 360;
         while (headingError <= -180) headingError += 360;
 
         // Multiply the error by the gain to determine the required steering correction/  Limit the result to +/- 1.0
@@ -306,8 +298,14 @@ public abstract class RobotParent extends LinearOpMode {
     }
 
     public void driveToDistance(double maxSpeed, double targetDistance, double heading) {
-        final double SPEED_GAIN  =  0.03  ;   //  Forward Speed Control "Gain". e.g. Ramp up to 50% power at a 25 inch error.   (0.50 / 25.0)
-        final double TURN_GAIN   =  0.01  ;   //  Turn Control "Gain".  e.g. Ramp up to 25% power at a 25 degree error. (0.25 / 25.0)
+        driveToDistance(maxSpeed, targetDistance, heading, false);
+    }
+
+    public void driveToDistance(double maxSpeed, double targetDistance, double heading, boolean backwards) {
+        final double SPEED_GAIN = 0.03;   //  Forward Speed Control "Gain". e.g. Ramp up to 50% power at a 25 inch error.   (0.50 / 25.0)
+        final double TURN_GAIN = 0.01;   //  Turn Control "Gain".  e.g. Ramp up to 25% power at a 25 degree error. (0.25 / 25.0)
+
+        DistanceSensor localSensor = backwards ? sensorBackDistance : sensorFrontDistance;
 
         leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         leftBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -316,7 +314,8 @@ public abstract class RobotParent extends LinearOpMode {
 
         do {
             while (opModeIsActive() && !gamepad1.y) {
-                double rangeError = (sensorFrontDistance.getDistance(DistanceUnit.INCH) - targetDistance);
+
+                double rangeError = (localSensor.getDistance(DistanceUnit.INCH) - targetDistance);
 
                 // If we are close on all axes stop, we need to experiment to find good values
                 if (Math.abs(rangeError) < 1) {
@@ -339,17 +338,17 @@ public abstract class RobotParent extends LinearOpMode {
                 if (gamepad1.y) {
                     moveRobot(0, 0, 0);
                 } else {
-                    moveRobot(driveSpeed, 0, turnSpeed);
+                    moveRobot(backwards ? -driveSpeed : driveSpeed, 0, turnSpeed);
                 }
 
                 telemetry.update();
             }
-        } while (sensorFrontDistance.getDistance(DistanceUnit.INCH) > targetDistance && !gamepad1.y); // if we over shot loop again to back up a bit
+        } while (opModeIsActive() && localSensor.getDistance(DistanceUnit.INCH) > targetDistance && !gamepad1.y); // if we over shot loop again to back up a bit
 
         moveRobot(0, 0, 0);
     }
 
-    public void liftBarUp(){
+    public void liftBarUp() {
         armMotor.setTargetPosition(1950);
         armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         armMotor.setPower(1);
@@ -361,12 +360,13 @@ public abstract class RobotParent extends LinearOpMode {
         armMotor.setPower(0);
     }
 
-    public void liftBarUpNoWait(){
+    public void liftBarUpNoWait() {
         armMotor.setTargetPosition(1950);
         armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         armMotor.setPower(1);
     }
-    public void liftDown(){
+
+    public void liftDown() {
         armMotor.setTargetPosition(1);
         armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         armMotor.setPower(1);
@@ -377,15 +377,15 @@ public abstract class RobotParent extends LinearOpMode {
         armMotor.setPower(0);
     }
 
-    public void liftDownNoWait(){
+    public void liftDownNoWait() {
         armMotor.setTargetPosition(1);
         armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         armMotor.setPower(1);
     }
 
-    public void initHardware(){
-        leftFrontDrive  = hardwareMap.get(DcMotor.class, "lf_drive");
-        leftBackDrive  = hardwareMap.get(DcMotor.class, "lb_drive");
+    public void initHardware() {
+        leftFrontDrive = hardwareMap.get(DcMotor.class, "lf_drive");
+        leftBackDrive = hardwareMap.get(DcMotor.class, "lb_drive");
         rightFrontDrive = hardwareMap.get(DcMotor.class, "rf_drive");
         rightBackDrive = hardwareMap.get(DcMotor.class, "rb_drive");
 
@@ -437,7 +437,7 @@ public abstract class RobotParent extends LinearOpMode {
         }
 
         RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.UP;
-        RevHubOrientationOnRobot.UsbFacingDirection  usbDirection  = RevHubOrientationOnRobot.UsbFacingDirection.FORWARD;
+        RevHubOrientationOnRobot.UsbFacingDirection usbDirection = RevHubOrientationOnRobot.UsbFacingDirection.FORWARD;
         RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(logoDirection, usbDirection);
 
         imu = hardwareMap.get(IMU.class, "imu");
