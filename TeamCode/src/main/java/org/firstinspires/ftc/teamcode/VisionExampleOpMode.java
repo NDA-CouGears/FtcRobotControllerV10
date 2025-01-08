@@ -187,7 +187,7 @@ public class VisionExampleOpMode extends AutoMode {
 
         do {
             while (opModeIsActive()) {
-                double rangeError = (sensorDistance.getDistance(DistanceUnit.INCH) - targetDistance);
+                double rangeError = (sensorFrontDistance.getDistance(DistanceUnit.INCH) - targetDistance);
 
                 // If we are close on all axes stop, we need to experiment to find good values
                 if (Math.abs(rangeError) < 1) {
@@ -215,7 +215,7 @@ public class VisionExampleOpMode extends AutoMode {
 
                 telemetry.update();
             }
-        } while (sensorDistance.getDistance(DistanceUnit.INCH) > targetDistance); // if we over shot loop again to back up a bit
+        } while (sensorFrontDistance.getDistance(DistanceUnit.INCH) > targetDistance); // if we over shot loop again to back up a bit
 
         moveRobot(0, 0, 0);
     }
@@ -258,7 +258,7 @@ public class VisionExampleOpMode extends AutoMode {
             double strafeSpeed = Range.clip(-yawError * STRAFE_GAIN, -MAX_AUTO_STRAFE, MAX_AUTO_STRAFE);
             double turnSpeed = Range.clip(headingError * TURN_GAIN, -MAX_AUTO_TURN, MAX_AUTO_TURN);
 
-            telemetry.addData("Auto Drive Distance","Range %f, Drive %5.2f, Strafe %5.2f, Turn %5.2f ", sensorDistance.getDistance(DistanceUnit.INCH), driveSpeed, strafeSpeed, turnSpeed);
+            telemetry.addData("Auto Drive Distance","Range %f, Drive %5.2f, Strafe %5.2f, Turn %5.2f ", sensorFrontDistance.getDistance(DistanceUnit.INCH), driveSpeed, strafeSpeed, turnSpeed);
 
             // For debugging let us pause motion to see telemetry
             if (gamepad1.y) {

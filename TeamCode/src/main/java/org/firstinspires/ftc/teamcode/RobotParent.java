@@ -32,7 +32,11 @@ public abstract class RobotParent extends LinearOpMode {
 
     protected TouchSensor touchSensor = null;
 
-    protected DistanceSensor sensorDistance = null;
+    protected DistanceSensor sensorFrontDistance = null;
+    protected DistanceSensor sensorLeftDistance = null;
+    protected DistanceSensor sensorRightDistance = null;
+    protected DistanceSensor sensorBackDistance = null;
+
 
     final protected static double ClawClosed = 0.68;
     final protected static double ClawOpen = 0.31;
@@ -312,7 +316,7 @@ public abstract class RobotParent extends LinearOpMode {
 
         do {
             while (opModeIsActive() && !gamepad1.y) {
-                double rangeError = (sensorDistance.getDistance(DistanceUnit.INCH) - targetDistance);
+                double rangeError = (sensorFrontDistance.getDistance(DistanceUnit.INCH) - targetDistance);
 
                 // If we are close on all axes stop, we need to experiment to find good values
                 if (Math.abs(rangeError) < 1) {
@@ -340,7 +344,7 @@ public abstract class RobotParent extends LinearOpMode {
 
                 telemetry.update();
             }
-        } while (sensorDistance.getDistance(DistanceUnit.INCH) > targetDistance && !gamepad1.y); // if we over shot loop again to back up a bit
+        } while (sensorFrontDistance.getDistance(DistanceUnit.INCH) > targetDistance && !gamepad1.y); // if we over shot loop again to back up a bit
 
         moveRobot(0, 0, 0);
     }
@@ -393,7 +397,11 @@ public abstract class RobotParent extends LinearOpMode {
 
         touchSensor = hardwareMap.get(TouchSensor.class, "touchSensor");
 
-        sensorDistance = hardwareMap.get(DistanceSensor.class, "distance");
+        sensorFrontDistance = hardwareMap.get(DistanceSensor.class, "distance");
+        sensorLeftDistance = hardwareMap.get(DistanceSensor.class, "left_sensor");
+        sensorRightDistance = hardwareMap.get(DistanceSensor.class, "right_sensor");
+        sensorBackDistance = hardwareMap.get(DistanceSensor.class, "back_sensor");
+
 
         leftFrontDrive.setDirection(DcMotor.Direction.FORWARD);
         leftBackDrive.setDirection(DcMotor.Direction.FORWARD);
