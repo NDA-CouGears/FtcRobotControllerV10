@@ -36,8 +36,9 @@ public class AutoMidRightPathRevision extends AutoMode {
             //place arm down to grab specimin
             turnToHeading(0.8, -180);
             turnToHeading(0.2, -180);
-            armDown();
+            driveToDistance(0.9, 27, -180);
             openClaw();
+            armDown();
             sleep(2000);
             driveStraight(0.9, 4, 0);
             sleep(200);
