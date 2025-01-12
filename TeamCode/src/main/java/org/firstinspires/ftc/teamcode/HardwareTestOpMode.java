@@ -46,16 +46,20 @@ public class HardwareTestOpMode extends LinearOpMode {
 
         // Now initialize the IMU with this mounting orientation
         // This sample expects the IMU to be in a REV Hub and named "imu".
-        imu = hardwareMap.get(IMU.class, "imu");
-        imu.initialize(new IMU.Parameters(orientationOnRobot));
-        imu.resetYaw();
+        imu = hardwareMap.tryGet(IMU.class, "imu");
+        if (imu != null) {
+            imu.initialize(new IMU.Parameters(orientationOnRobot));
+            imu.resetYaw();
+        }
 
         double claw_pos = 0;
         claw = hardwareMap.get(Servo.class, "claw");
 
         double arm_pos = ARM_UP;
-        arm = hardwareMap.get(Servo.class, "arm");
-        arm.setPosition(arm_pos);
+        arm = hardwareMap.tryGet(Servo.class, "arm");
+        if (arm != null) {
+            arm.setPosition(arm_pos);
+        }
 
         lift = hardwareMap.get(DcMotor.class, "lift");
         int lift_hold_pos = 0;
@@ -141,9 +145,9 @@ public class HardwareTestOpMode extends LinearOpMode {
             }
 
             if (climb != null) {
-                double climb_delta = -gamepad2.left_stick_y;
+                double climb_delta = gamepad2.left_stick_y;
                 climb.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                climb.setPower(climb_delta);
+                climb.setPower(climb_delta*.5);
             }
 
             if (imu != null) {
@@ -151,9 +155,6 @@ public class HardwareTestOpMode extends LinearOpMode {
                     imu.resetYaw();
                 }
             }
-            // Retrieve Rotational Angles and Velocities
-            YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
-            AngularVelocity angularVelocity = imu.getRobotAngularVelocity(AngleUnit.DEGREES);
 
             if (lift != null)
                 telemetry.addData("Lift position", lift.getCurrentPosition());
@@ -163,6 +164,8 @@ public class HardwareTestOpMode extends LinearOpMode {
                 telemetry.addData("Arm position", arm.getPosition());
 
             if (imu != null) {
+                YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
+                AngularVelocity angularVelocity = imu.getRobotAngularVelocity(AngleUnit.DEGREES);
                 telemetry.addData("Yaw (Z)", "%.2f Deg. (Heading)", orientation.getYaw(AngleUnit.DEGREES));
                 telemetry.addData("Pitch (X)", "%.2f Deg.", orientation.getPitch(AngleUnit.DEGREES));
                 telemetry.addData("Roll (Y)", "%.2f Deg.\n", orientation.getRoll(AngleUnit.DEGREES));
