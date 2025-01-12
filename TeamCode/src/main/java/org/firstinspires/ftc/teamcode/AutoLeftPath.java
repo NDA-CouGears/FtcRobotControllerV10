@@ -26,14 +26,15 @@ public class AutoLeftPath extends AutoMode {
             armUp();
             liftDownNoWait();
             //gets first block; puts in higher basket
-            turnToHeading(0.4, -93);
+            turnToHeading(0.4, -95);
             armSetPosition(1, 600);
-            driveStraight(0.4, 14, -93);
-            turnToHeading(0.4, -93);
+            //driveStraight(0.4, 14, -93);
+            driveToDistance(0.5, 20, 0, -95, true, false);
+            turnToHeading(0.4, -95);
             //armSetPosition(1,3000);
             closeClaw();
             armUp();
-            driveStraight(0.4, -13, -93);
+            driveToDistance(0.5, 9, 0, -95, true, false);
             turnToHeading(0.4, 30);
             liftHigherBasketNoWait();
             waitForLift();
@@ -44,11 +45,13 @@ public class AutoLeftPath extends AutoMode {
             liftDownNoWait();
             //gets second block; puts in higher basket
             turnToHeading(0.4, -90);
-            armSetPosition(0.75, 500);
-            driveStraight(0.4, 13, -90);
-            slide(0.2, 9, -90);
-            turnToHeading(0.4, -90);
             armSetPosition(1, 600);
+            driveToDistance(0.5, 18, 0, -90, true, false);
+            //driveStraight(0.4, 13, -90);
+            //slide(0.2, 9, -90);
+            driveToDistance(0.5, 0, 4, -90, false, true);
+            turnToHeading(0.4, -90);
+            //armSetPosition(1, 600);
             closeClaw();
             armUp();
             liftHigherBasketNoWait();
@@ -61,10 +64,16 @@ public class AutoLeftPath extends AutoMode {
             armUp();
             sleep(100);
             liftDownNoWait();
+            turnToHeading(0.3, -45);
+            driveToDistance(0.3, 26, 0, -45, true, false);
+
+            /*
             turnToHeading(0.4,-90);
             slide(0.4, -13.5,-90);
             driveStraight(0.4, 49, -90);
             slide(0.4, -1,-90);
+
+             */
 
             
         }
