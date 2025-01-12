@@ -298,11 +298,13 @@ public abstract class RobotParent extends LinearOpMode {
     }
 
     public void driveToDistance(double maxSpeed, double targetDistance, double heading) {
-        driveToDistance(maxSpeed, targetDistance, 0, heading, false, false);
+        driveToDistance(maxSpeed, targetDistance, 0, heading, false, false, 0.03);
     }
-
     public void driveToDistance(double maxSpeed, double targetForwardDistance, double targetLateralDistance, double heading, boolean backwards, boolean left) {
-        final double SPEED_GAIN = 0.03;   //  Forward Speed Control "Gain". e.g. Ramp up to 50% power at a 25 inch error.   (0.50 / 25.0)
+        driveToDistance(maxSpeed, targetForwardDistance, targetLateralDistance, heading, backwards, left, 0.03);
+    }
+    public void driveToDistance(double maxSpeed, double targetForwardDistance, double targetLateralDistance, double heading, boolean backwards, boolean left, double speedGain) {
+        //final double SPEED_GAIN = 0.03;   //  Forward Speed Control "Gain". e.g. Ramp up to 50% power at a 25 inch error.   (0.50 / 25.0)
         final double TURN_GAIN = 0.01;   //  Turn Control "Gain".  e.g. Ramp up to 25% power at a 25 degree error. (0.25 / 25.0)
 
         DistanceSensor localForwardSensor = backwards ? sensorBackDistance : sensorFrontDistance;
@@ -333,15 +335,15 @@ public abstract class RobotParent extends LinearOpMode {
                 double turnSpeed = getSteeringCorrection(heading, TURN_GAIN);
 
                 if ( rangeErrorForward < 0 ) {
-                    forwardDriveSpeed = Range.clip(rangeErrorForward * SPEED_GAIN, -maxSpeed, -0.1);
+                    forwardDriveSpeed = Range.clip(rangeErrorForward * speedGain, -maxSpeed, -0.1);
                 }
                 else if ( rangeErrorForward > 0 ) {
-                    forwardDriveSpeed = Range.clip(rangeErrorForward * SPEED_GAIN, 0.1, maxSpeed);
+                    forwardDriveSpeed = Range.clip(rangeErrorForward * speedGain, 0.1, maxSpeed);
                 }
                 if ( rangeErrorLateral < 0 ) {
-                    lateralDriveSpeed = Range.clip(rangeErrorLateral * SPEED_GAIN, -maxSpeed, -0.1);
+                    lateralDriveSpeed = Range.clip(rangeErrorLateral * speedGain, -maxSpeed, -0.1);
                 } else if ( rangeErrorLateral > 0 ){
-                    lateralDriveSpeed = Range.clip(rangeErrorLateral * SPEED_GAIN, 0.1, maxSpeed);
+                    lateralDriveSpeed = Range.clip(rangeErrorLateral * speedGain, 0.1, maxSpeed);
                 }
                 telemetry.addData("Auto DTD", "Drive %5.2f Lateral %5.2f Turn %5.2f ", forwardDriveSpeed, lateralDriveSpeed, turnSpeed);
 
