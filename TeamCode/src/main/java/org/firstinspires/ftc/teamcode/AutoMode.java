@@ -111,6 +111,8 @@ public class AutoMode extends RobotParent {
     public void driveStraight(double maxDriveSpeed,
                               double distance,
                               double heading) {
+        //clear cache to get most recent encoder value(s)
+        clearBulkCache();
 
         // Ensure that the OpMode is still active
         if (opModeIsActive()) {
