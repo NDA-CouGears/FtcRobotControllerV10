@@ -22,6 +22,7 @@ public class HardwareTestOpMode extends LinearOpMode {
 
     private ElapsedTime runtime = new ElapsedTime();
 
+    DcMotor climb;
     DcMotor lift;
     Servo claw;
     Servo arm;
@@ -34,6 +35,14 @@ public class HardwareTestOpMode extends LinearOpMode {
         RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.UP;
         RevHubOrientationOnRobot.UsbFacingDirection  usbDirection  = RevHubOrientationOnRobot.UsbFacingDirection.FORWARD;
         RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(logoDirection, usbDirection);
+
+        climb = hardwareMap.tryGet(DcMotor.class, "climb");
+        if (climb != null) {
+            climb.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            climb.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            climb.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            climb.setDirection(DcMotorSimple.Direction.FORWARD);
+        }
 
         // Now initialize the IMU with this mounting orientation
         // This sample expects the IMU to be in a REV Hub and named "imu".
@@ -129,6 +138,12 @@ public class HardwareTestOpMode extends LinearOpMode {
                     lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                     lift.setPower(lift_delta);
                 }
+            }
+
+            if (climb != null) {
+                double climb_delta = -gamepad2.left_stick_y;
+                climb.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                climb.setPower(climb_delta);
             }
 
             if (imu != null) {
