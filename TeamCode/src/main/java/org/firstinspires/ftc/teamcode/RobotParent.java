@@ -300,6 +300,9 @@ public abstract class RobotParent extends LinearOpMode {
     public void driveToDistance(double maxSpeed, double targetDistance, double heading) {
         driveToDistance(maxSpeed, targetDistance, 0, heading, false, false, 0.03);
     }
+    public void driveToDistance(double maxSpeed, double targetDistance, double heading, double speedGain) {
+        driveToDistance(maxSpeed, targetDistance, 0, heading, false, false, speedGain);
+    }
     public void driveToDistance(double maxSpeed, double targetForwardDistance, double targetLateralDistance, double heading, boolean backwards, boolean left) {
         driveToDistance(maxSpeed, targetForwardDistance, targetLateralDistance, heading, backwards, left, 0.03);
     }
