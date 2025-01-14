@@ -45,6 +45,15 @@ public class AutoMode extends RobotParent {
         }
     }
 
+    protected void halfOpenClaw(){
+        claw.setPosition(0.50);
+        try {
+            Thread.sleep(200);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     protected void armDown(){
         arm.setPosition(ARM_DOWN);
         try {
