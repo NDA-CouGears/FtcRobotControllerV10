@@ -209,7 +209,7 @@ public abstract class RobotParent extends LinearOpMode {
                 holdingAtA = true;
             }
         } else if ((gamepad2.b) || (holdingAtB)) {
-            armMotor.setTargetPosition(4700);
+            armMotor.setTargetPosition(2410);
             armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             armMotor.setPower(1);
 
@@ -367,7 +367,7 @@ public abstract class RobotParent extends LinearOpMode {
     }
 
     public void liftBarUp() {
-        armMotor.setTargetPosition(1950);
+        armMotor.setTargetPosition(1000);
         armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         armMotor.setPower(1);
 
@@ -379,7 +379,7 @@ public abstract class RobotParent extends LinearOpMode {
     }
 
     public void liftBarUpNoWait() {
-        armMotor.setTargetPosition(1950);
+        armMotor.setTargetPosition(1000);
         armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         armMotor.setPower(1);
     }
