@@ -18,7 +18,7 @@ public class AutoMidRightPathRevision extends AutoMode {
             // Lift sample to above second bar height
             liftBarUpNoWait();
             // Drive lose the the submersible
-            driveToDistance(0.9, 9, 0);
+            driveToDistance(0.9, 7, 0);
             waitForLift();
             // Drive until sample is over second bar
             driveToDistance(0.7, 5.25, 0);
@@ -28,7 +28,7 @@ public class AutoMidRightPathRevision extends AutoMode {
             driveToDistance(0.9, 14, 0);
             // Drive close enough to wall to be sure range sensor sees it and drive close to wall
             slide(0.9, -10, 0);
-            driveToDistance(0.9, 0, 25, 0, false, false);
+            driveToDistance(0.9, 0, 27, 0, false, false);
             driveStraight(0.9, 30, 0);
             driveToDistance(0.9,0, 15, 0,true, false );
             driveStraight(0.9, -39, 0);
@@ -50,12 +50,36 @@ public class AutoMidRightPathRevision extends AutoMode {
             slide(0.9, 40, 0);
             liftBarUpNoWait();
             // Drive lose the the submersible
-            driveToDistance(0.9, 8, 0);
+            driveToDistance(0.9, 7, 0);
             waitForLift();
             // Drive until sample is over second bar
             driveToDistance(0.5, 5.25, 0);
             // Lock the sample onto the bar
             liftDown();
+            //return to base to pick up 3rd specimin
+            turnToHeading(0.4,-90);
+            driveToDistance(0.4, 0, 4, -90, false, false);
+            driveStraight(0.4, 14, -90);
+            openClaw();
+            armDown();
+            sleep(2000);
+            driveStraight(0.9, 4, -90);
+            sleep(200);
+            closeClaw();
+            sleep(100);
+            armUp();
+            turnToHeading(0.4, 0);
+            slide(0.4, 30, 0);
+            liftBarUpNoWait();
+            // Drive lose the the submersible
+            driveToDistance(0.9, 7, 0);
+            waitForLift();
+            // Drive until sample is over second bar
+            driveToDistance(0.5, 5.25, 0);
+            // Lock the sample onto the bar
+            liftDown();
+
+
 
 
         }

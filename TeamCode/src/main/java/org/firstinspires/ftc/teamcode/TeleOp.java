@@ -38,7 +38,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "TeleOp", group = "Drive")
+@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "Tele Op 2", group = "Drive")
 public class TeleOp extends RobotParent {
 
     private ElapsedTime runtime = new ElapsedTime();
@@ -100,9 +100,9 @@ public class TeleOp extends RobotParent {
         int current_lift_pos = armMotor.getCurrentPosition();
 
         if (gamepad2.a) {
-            lift_hold_pos = 2000;
+            lift_hold_pos = 1025;
         } else if (gamepad2.b) {
-            lift_hold_pos = 4700;
+            lift_hold_pos = 2410;
         } else {
             double armMotorPower = -gamepad2.right_stick_y;
 
@@ -133,7 +133,7 @@ public class TeleOp extends RobotParent {
                 } else {
                     armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                     lift_hold_pos = armMotor.getCurrentPosition();
-                    if (lift_hold_pos < 5000) {
+                    if (lift_hold_pos < 2500) {
                         armMotor.setPower(armMotorPower);
                     }
                 }

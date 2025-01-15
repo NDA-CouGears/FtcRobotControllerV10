@@ -10,6 +10,8 @@ public class AutoMiddlePath extends AutoMode {
         imu.resetYaw();
 
         if (opModeIsActive()) {
+
+
             closeClaw();
             armUp();
             driveStraight(0.3, 23, 0);
@@ -19,6 +21,7 @@ public class AutoMiddlePath extends AutoMode {
             driveStraight(0.3, -23, 0);
             turnToHeading(0.3, -90);
             driveStraight(0.3, 45, -90);
+
 
         }
         while (opModeIsActive()) {

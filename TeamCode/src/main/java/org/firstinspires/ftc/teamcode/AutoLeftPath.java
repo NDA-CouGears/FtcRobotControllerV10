@@ -24,6 +24,7 @@ public class AutoLeftPath extends AutoMode {
             armBasketDown();
             openClaw();
             armUp();
+            sleep(100);
             //gets first block; puts in higher basket
             turnToHeading(0.4, -95);
             liftDownNoWait();
@@ -42,9 +43,9 @@ public class AutoLeftPath extends AutoMode {
             openClaw();
             armUp();
             sleep(100);
-            liftDownNoWait();
             //gets second block; puts in higher basket
             turnToHeading(0.4, -90);
+            liftDownNoWait();
             armSetPosition(1, 600);
             driveToDistance(0.6, 17, 0, -90, true, false, 0.05);
             //driveStraight(0.4, 13, -90);
@@ -64,8 +65,8 @@ public class AutoLeftPath extends AutoMode {
             halfOpenClaw();
             armUp();
             sleep(100);
-            liftDownNoWait();
             turnToHeading(0.4, 0);
+            liftDownNoWait();
             driveToDistance(0.6, 6, 18.5, 0, false, true, 0.05);
             turnToHeading(0.4, -55);
             //armSetPosition(0.75, 500);

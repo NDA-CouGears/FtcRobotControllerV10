@@ -150,45 +150,6 @@ public abstract class RobotParent extends LinearOpMode {
         }
     }
 
-    protected void mDrive() {
-        double max;
-        // POV Mode uses left joystick to go forward & strafe, and right joystick to rotate.
-        double axial = signPreserveSquare(gamepad1.left_stick_y * -0.9); // Remember, this is reversed!
-        double lateral = signPreserveSquare(gamepad1.left_stick_x * 0.7); // Counteract imperfect strafing
-        double yaw = (signPreserveSquare(gamepad1.right_stick_x * 1)) * 0.5;
-
-        // Combine the joystick requests for each axis-motion to determine each wheel's power.
-        // Set up a variable for each drive wheel to save the power level for telemetry.
-        double leftFrontPower = axial + lateral + yaw;
-        double rightFrontPower = axial - lateral - yaw;
-        double leftBackPower = axial - lateral + yaw;
-        double rightBackPower = axial + lateral - yaw;
-
-        // Normalize the values so no wheel power exceeds 100%
-        // This ensures that the robot maintains the desired motion.
-        max = Math.max(Math.abs(leftFrontPower), Math.abs(rightFrontPower));
-        max = Math.max(max, Math.abs(leftBackPower));
-        max = Math.max(max, Math.abs(rightBackPower));
-
-        if (max > 1.0) {
-            leftFrontPower /= max;
-            rightFrontPower /= max;
-            leftBackPower /= max;
-            rightBackPower /= max;
-        }
-
-        // Send calculated power to wheels
-        leftFrontDrive.setPower(leftFrontPower);
-        rightFrontDrive.setPower(rightFrontPower);
-        leftBackDrive.setPower(leftBackPower);
-        rightBackDrive.setPower(rightBackPower);
-
-        int lfp = leftFrontDrive.getCurrentPosition();
-        int rfp = rightFrontDrive.getCurrentPosition();
-        int lbp = leftBackDrive.getCurrentPosition();
-        int rbp = rightBackDrive.getCurrentPosition();
-    }
-
     protected void arm() {
         boolean holdingAtA = false;
         boolean holdingAtB = false;
@@ -196,7 +157,7 @@ public abstract class RobotParent extends LinearOpMode {
             holdingAtA = false;
             holdingAtB = false;
         } else if ((gamepad2.a) || (holdingAtA)) {
-            armMotor.setTargetPosition(2000);
+            armMotor.setTargetPosition(1025);
             armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             armMotor.setPower(1);
 
@@ -401,24 +362,50 @@ public abstract class RobotParent extends LinearOpMode {
         armMotor.setPower(1);
     }
 
+    /**
+     * <Robot type="FirstInspires-FTC">
+     * <LynxUsbDevice name="Control Hub Portal" serialNumber="(embedded)" parentModuleAddress="173">
+     * <LynxModule name="Expansion Hub 2" port="2">
+     * <goBILDA5202SeriesMotor name="lift" port="0"/>
+     * <goBILDA5202SeriesMotor name="climb" port="1"/>
+     * <REV_VL53L0X_RANGE_SENSOR name="distance" port="0" bus="0"/>
+     * <REV_VL53L0X_RANGE_SENSOR name="left_sensor" port="0" bus="1"/>
+     * <REV_VL53L0X_RANGE_SENSOR name="back_sensor" port="0" bus="2"/>
+     * </LynxModule>
+     * <LynxModule name="Control Hub" port="173">
+     * <NeveRest20Gearmotor name="lb_drive" port="0"/>
+     * <NeveRest20Gearmotor name="rb_drive" port="1"/>
+     * <NeveRest20Gearmotor name="lf_drive" port="2"/>
+     * <NeveRest20Gearmotor name="rf_drive" port="3"/>
+     * <Servo name="claw" port="0"/>
+     * <Servo name="arm" port="1"/>
+     * <RevTouchSensor name="touchSensor" port="1"/>
+     * <AdafruitBNO055IMU name="imu" port="0" bus="1"/>
+     * <REV_VL53L0X_RANGE_SENSOR name="right_sensor" port="0" bus="2"/>
+     * </LynxModule>
+     * </LynxUsbDevice>
+     * </Robot>
+     */
     public void initHardware() {
-        leftFrontDrive = hardwareMap.get(DcMotor.class, "lf_drive");
-        leftBackDrive = hardwareMap.get(DcMotor.class, "lb_drive");
-        rightFrontDrive = hardwareMap.get(DcMotor.class, "rf_drive");
-        rightBackDrive = hardwareMap.get(DcMotor.class, "rb_drive");
+        leftFrontDrive = hardwareMap.get(DcMotor.class, "lf_drive"); // control hub 2
+        leftBackDrive = hardwareMap.get(DcMotor.class, "lb_drive"); // control hub 0
+        rightFrontDrive = hardwareMap.get(DcMotor.class, "rf_drive"); // control hub 3
+        rightBackDrive = hardwareMap.get(DcMotor.class, "rb_drive"); // control hub 1
 
-        claw = hardwareMap.get(Servo.class, "claw");
-        arm = hardwareMap.get(Servo.class, "arm");
+        claw = hardwareMap.get(Servo.class, "claw"); //  control hub 0
+        arm = hardwareMap.get(Servo.class, "arm"); // control hub 1
         arm.setPosition(ARM_UP);
 
-        armMotor = hardwareMap.get(DcMotor.class, "lift");
+        armMotor = hardwareMap.get(DcMotor.class, "lift"); // Expansion hub port 0
 
-        touchSensor = hardwareMap.get(TouchSensor.class, "touchSensor");
+        // climbMotor = hardwareMap.get(DcMotor.class, "motor"); // Expansion hub port 1
 
-        sensorFrontDistance = hardwareMap.get(DistanceSensor.class, "distance");
-        sensorLeftDistance = hardwareMap.get(DistanceSensor.class, "left_sensor");
-        sensorRightDistance = hardwareMap.get(DistanceSensor.class, "right_sensor");
-        sensorBackDistance = hardwareMap.get(DistanceSensor.class, "back_sensor");
+        touchSensor = hardwareMap.get(TouchSensor.class, "touchSensor"); // control hub digital 1
+
+        sensorFrontDistance = hardwareMap.get(DistanceSensor.class, "distance"); // expansion i2c 0
+        sensorLeftDistance = hardwareMap.get(DistanceSensor.class, "left_sensor"); // expansion i2c 1
+        sensorRightDistance = hardwareMap.get(DistanceSensor.class, "right_sensor"); // control hub bus 2
+        sensorBackDistance = hardwareMap.get(DistanceSensor.class, "back_sensor"); // expansion i2c 2
 
 
         leftFrontDrive.setDirection(DcMotor.Direction.FORWARD);
@@ -443,6 +430,7 @@ public abstract class RobotParent extends LinearOpMode {
         rightBackDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         armMotor.setDirection(DcMotor.Direction.FORWARD);
+        armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
