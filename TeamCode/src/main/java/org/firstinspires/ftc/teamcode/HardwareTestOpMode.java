@@ -1,12 +1,11 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -23,7 +22,9 @@ public class HardwareTestOpMode extends LinearOpMode {
 
     private ElapsedTime runtime = new ElapsedTime();
 
-    DcMotor climb;
+    DcMotor climbMotor;
+    CRServo climbServo;
+
     DcMotor lift;
     Servo claw;
     Servo arm;
@@ -37,12 +38,23 @@ public class HardwareTestOpMode extends LinearOpMode {
         RevHubOrientationOnRobot.UsbFacingDirection  usbDirection  = RevHubOrientationOnRobot.UsbFacingDirection.FORWARD;
         RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(logoDirection, usbDirection);
 
-        climb = hardwareMap.tryGet(DcMotor.class, "climb");
-        if (climb != null) {
-            climb.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            climb.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            climb.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            climb.setDirection(DcMotorSimple.Direction.FORWARD);
+        climbMotor = hardwareMap.tryGet(DcMotor.class, "climb");
+        if (climbMotor != null) {
+            climbMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            climbMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            climbMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            climbMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+        }
+
+        climbServo = hardwareMap.tryGet(CRServo.class, "climb_up");
+        if (climbServo != null) {
+            /* In case we need to customize pwm range
+            ServoControllerEx controller = (ServoControllerEx) climb_servo.getController();
+            int portNum = climb_servo.getPortNumber();
+            PwmControl.PwmRange range = new PwmControl.PwmRange(553,2500);
+            controller.setServoPwmRange(portNum,range);
+            */
+            climbServo.setDirection(DcMotorSimple.Direction.FORWARD);
         }
 
         // Now initialize the IMU with this mounting orientation
@@ -145,10 +157,16 @@ public class HardwareTestOpMode extends LinearOpMode {
                 }
             }
 
-            if (climb != null) {
+            if (climbMotor != null) {
                 double climb_delta = gamepad2.left_stick_y;
-                climb.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                climb.setPower(climb_delta*.5);
+                if (climbServo != null) {
+                    if (climb_delta > 0)
+                        climbServo.setPower(climb_delta);
+                    else
+                        climbServo.setPower(0);
+                }
+                climbMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                climbMotor.setPower(climb_delta*-0.25);
             }
 
             if (imu != null) {
