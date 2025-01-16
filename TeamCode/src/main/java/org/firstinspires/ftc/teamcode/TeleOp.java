@@ -176,6 +176,12 @@ public class TeleOp extends RobotParent {
         }
     }
 
+    protected void test(){
+        if (gamepad2.x){
+            driveToDistance(0.4, 0, 10, 0, false, false);
+        }
+    }
+
     @Override
     public void runOpMode() {
 
@@ -212,6 +218,8 @@ public class TeleOp extends RobotParent {
 
             //hooks sample on higher bar
             hookSample();
+
+            test();
 
             telemetry.update();
         }
