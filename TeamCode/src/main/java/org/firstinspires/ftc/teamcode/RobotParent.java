@@ -390,7 +390,7 @@ public abstract class RobotParent extends LinearOpMode {
             telemetry.addData("Front", "%2.2f", sensorFrontDistance.getDistance(DistanceUnit.INCH));
             telemetry.addData("Back", "%2.2f", sensorBackDistance.getDistance(DistanceUnit.INCH));
             telemetry.addData("Left", "%2.2f", sensorLeftDistance.getDistance(DistanceUnit.INCH));
-            telemetry.addData("Front", "%2.2f", sensorRightDistance.getDistance(DistanceUnit.INCH));
+            telemetry.addData("Right", "%2.2f", sensorRightDistance.getDistance(DistanceUnit.INCH));
             telemetry.update();
         }
     }
