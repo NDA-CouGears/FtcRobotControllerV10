@@ -211,6 +211,18 @@ public abstract class RobotParent extends LinearOpMode {
         }
     }
 
+    public void climb() {
+        double climbDelta = gamepad2.right_stick_y;
+
+        if (climbDelta > 0)
+            climbServo.setPower(climbDelta);
+        else
+            climbServo.setPower(0);
+
+        climbMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        climbMotor.setPower(climbDelta * -0.25);
+    }
+
     public void clearBulkCache() {
         List<LynxModule> allHubs = hardwareMap.getAll(LynxModule.class);
         for (LynxModule module : allHubs) {
@@ -366,6 +378,7 @@ public abstract class RobotParent extends LinearOpMode {
         armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         armMotor.setPower(1);
     }
+
 
     /**
      * <Robot type="FirstInspires-FTC">

@@ -219,6 +219,8 @@ public class TeleOp extends RobotParent {
             //hooks sample on higher bar
             hookSample();
 
+            climb();
+
             test();
 
             telemetry.update();
