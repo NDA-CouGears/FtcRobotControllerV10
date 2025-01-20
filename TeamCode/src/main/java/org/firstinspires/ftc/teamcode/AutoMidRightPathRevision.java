@@ -28,7 +28,7 @@ public class AutoMidRightPathRevision extends AutoMode {
             // Back away, turn toward other team colored specimens
             driveToDistance(0.9, 14, 0);
             // Drive close enough to wall to be sure range sensor sees it and drive close to wall
-            slide(0.9, -10, 0);
+            slide(0.9, -15, 0);
             driveToDistance(0.9, 0, 27, 0, false, false);
             driveStraight(0.9, 25, 0);
             driveToDistance(0.9,0, 15, 0,true, false );
@@ -40,7 +40,7 @@ public class AutoMidRightPathRevision extends AutoMode {
             driveToDistance(0.9, 27, -180);
             openClaw();
             armDown();
-            sleep(2000);
+            sleep(1500);
             driveStraight(0.9, 4, 0);
             sleep(200);
             closeClaw();
@@ -65,9 +65,9 @@ public class AutoMidRightPathRevision extends AutoMode {
             armDown();
             sleep(2000);
             driveStraight(0.9, 4, -90);
-            sleep(200);
-            closeClaw();
             sleep(100);
+            closeClaw();
+            sleep(50);
             armUp();
             turnToHeading(0.4, 0);
             slide(0.4, 30, 0);
