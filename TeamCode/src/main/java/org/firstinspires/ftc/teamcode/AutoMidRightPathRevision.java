@@ -7,7 +7,8 @@ public class AutoMidRightPathRevision extends AutoMode {
     @Override
     public void runOpMode() throws InterruptedException {
         initHardware();
-        waitForStart();
+        robotInit();
+        //waitForStart();
         imu.resetYaw();
 
         if (opModeIsActive()) {

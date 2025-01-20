@@ -7,7 +7,8 @@ public class AutoLeftPath extends AutoMode {
     @Override
     public void runOpMode() throws InterruptedException {
         initHardware();
-        waitForStart();
+        robotInit();
+        //waitForStart();
         imu.resetYaw();
 
         if (opModeIsActive()){
@@ -60,6 +61,7 @@ public class AutoLeftPath extends AutoMode {
             sleep(100);
             turnToHeading(0.4, 0);
             liftDownNoWait();
+            //gets third block and puts in higher basket
             driveToDistance(0.6, 6, 18.5, 0, false, true, 0.05);
             turnToHeading(0.4, -55);
             armDown();
@@ -73,22 +75,9 @@ public class AutoLeftPath extends AutoMode {
             armBasketDown();
             openClaw();
             armUp();
+            //backs up
             driveStraight(0.5, -10, 55);
-            //driveToDistance(0.3, 12, 6, -90, );
-
-            /*
-            turnToHeading(0.4,-90);
-            slide(0.4, -13.5,-90);
-            driveStraight(0.4, 49, -90);
-            slide(0.4, -1,-90);
-
-             */
-
             
-        }
-        while (opModeIsActive()){
-            telemetry.addLine("after turn");
-            updateTelemetry();
         }
     }
 }

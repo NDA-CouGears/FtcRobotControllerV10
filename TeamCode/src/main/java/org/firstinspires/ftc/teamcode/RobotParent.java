@@ -385,6 +385,16 @@ public abstract class RobotParent extends LinearOpMode {
         armMotor.setPower(1);
     }
 
+    public void robotInit(){
+        while (opModeInInit()){
+            telemetry.addData("Front", "%2.2f", sensorFrontDistance.getDistance(DistanceUnit.INCH));
+            telemetry.addData("Back", "%2.2f", sensorBackDistance.getDistance(DistanceUnit.INCH));
+            telemetry.addData("Left", "%2.2f", sensorLeftDistance.getDistance(DistanceUnit.INCH));
+            telemetry.addData("Front", "%2.2f", sensorRightDistance.getDistance(DistanceUnit.INCH));
+            telemetry.update();
+        }
+    }
+
 
     /**
      * <Robot type="FirstInspires-FTC">
