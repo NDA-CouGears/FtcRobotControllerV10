@@ -60,7 +60,8 @@ public class AutoMidRightPathRevision extends AutoMode {
             //return to base to pick up 3rd specimin
             turnToHeading(0.4,-90);
             driveToDistance(0.4, 0, 4, -90, false, false);
-            driveStraight(0.4, 14, -90);
+            driveToDistance(0.4, 7, -90);
+            /*
             openClaw();
             armDown();
             sleep(2000);
@@ -79,7 +80,7 @@ public class AutoMidRightPathRevision extends AutoMode {
             driveToDistance(0.5, 5.25, 0);
             // Lock the sample onto the bar
             liftDown();
-
+            */
 
 
 
