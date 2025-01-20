@@ -192,6 +192,10 @@ public class HardwareTestOpMode extends LinearOpMode {
                 telemetry.addData("Pitch (X) velocity", "%.2f Deg/Sec", angularVelocity.xRotationRate);
                 telemetry.addData("Roll (Y) velocity", "%.2f Deg/Sec", angularVelocity.yRotationRate);
             }
+
+            if(climbMotor != null){
+                telemetry.addData("Climb motor pos", "%d ", climbMotor.getCurrentPosition() );
+            }
             telemetry.update();
         }
     }

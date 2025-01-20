@@ -212,7 +212,7 @@ public abstract class RobotParent extends LinearOpMode {
     }
 
     public void climb() {
-        double climbDelta = gamepad2.right_stick_y;
+        double climbDelta = gamepad2.left_stick_y;
 
         if (climbDelta > 0)
             climbServo.setPower(climbDelta);
@@ -220,7 +220,13 @@ public abstract class RobotParent extends LinearOpMode {
             climbServo.setPower(0);
 
         climbMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        climbMotor.setPower(climbDelta * -0.25);
+        if( climbMotor.getCurrentPosition() > -2700 )
+            climbMotor.setPower(climbDelta * -0.25);
+        else
+            climbMotor.setPower(0);
+
+        telemetry.addData("Climb motor pos", "%d ", climbMotor.getCurrentPosition() );
+
     }
 
     public void clearBulkCache() {
