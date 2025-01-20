@@ -30,10 +30,10 @@ public class AutoMidRightPathRevision extends AutoMode {
             // Drive close enough to wall to be sure range sensor sees it and drive close to wall
             slide(0.9, -10, 0);
             driveToDistance(0.9, 0, 27, 0, false, false);
-            driveStraight(0.9, 30, 0);
+            driveStraight(0.9, 25, 0);
             driveToDistance(0.9,0, 15, 0,true, false );
-            driveStraight(0.9, -39, 0);
-            driveToDistance(0.9, 24, 0,0, true, false);
+            driveStraight(0.9, -34, 0);
+            driveToDistance(0.9, 22, 0,0, true, false);
             //place arm down to grab specimin
             turnToHeading(0.8, -180);
             turnToHeading(0.2, -180);
@@ -48,7 +48,7 @@ public class AutoMidRightPathRevision extends AutoMode {
             armUp();
             turnToHeading(0.8, 0);
             turnToHeading(0.2, 0);
-            slide(0.9, 40, 0);
+            slide(0.9, 42, 0);
             liftBarUpNoWait();
             // Drive lose the the submersible
             driveToDistance(0.9, 7, 0);
