@@ -220,7 +220,7 @@ public abstract class RobotParent extends LinearOpMode {
             climbServo.setPower(0);
 
         climbMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        if( climbMotor.getCurrentPosition() > -2700 )
+        if( climbMotor.getCurrentPosition() > -2700 || climbDelta < 0 )
             climbMotor.setPower(climbDelta * -0.25);
         else
             climbMotor.setPower(0);
