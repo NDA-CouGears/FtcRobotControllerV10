@@ -30,9 +30,9 @@ public class AutoMidRightPathRevision extends AutoMode {
             // Drive close enough to wall to be sure range sensor sees it and drive close to wall
             slide(0.9, -15, 0);
             driveToDistance(0.9, 0, 27, 0, false, false);
-            driveStraight(0.9, 25, 0);
+            driveStraight(0.9, 35, 0);
             driveToDistance(0.9,0, 15, 0,true, false );
-            driveStraight(0.9, -34, 0);
+            driveStraight(0.9, -39, 0);
             driveToDistance(0.9, 22, 0,0, true, false);
             //place arm down to grab specimin
             turnToHeading(0.8, -180);
@@ -58,9 +58,8 @@ public class AutoMidRightPathRevision extends AutoMode {
             // Lock the sample onto the bar
             liftDown();
             //return to base to pick up 3rd specimin
-            turnToHeading(0.4,-90);
-            driveToDistance(0.4, 0, 4, -90, false, false);
-            driveToDistance(0.4, 7, -90);
+            driveToDistance(0.6, 7, 0, 0, true, false);
+            driveToDistance(0.6, 0, 16, 0, false, false);
             /*
             openClaw();
             armDown();

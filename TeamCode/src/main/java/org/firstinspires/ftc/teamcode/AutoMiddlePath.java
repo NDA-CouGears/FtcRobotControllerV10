@@ -1,7 +1,9 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
+@Disabled
 @Autonomous( name = "MiddlePath", group = "OpModes")
 public class AutoMiddlePath extends AutoMode {
     public void runOpMode() throws InterruptedException {

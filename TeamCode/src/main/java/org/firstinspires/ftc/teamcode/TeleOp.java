@@ -169,9 +169,9 @@ public class TeleOp extends RobotParent {
 
     protected void hookSample(){
         if (gamepad1.x){
-            driveToDistance(0.4, 9, getHeading());
+            driveToDistance(0.9, 7, getHeading());
             liftBarUp();
-            driveToDistance(0.4, 6, getHeading());
+            driveToDistance(0.7, 5.25, getHeading());
             liftDownNoWait();
         }
     }
