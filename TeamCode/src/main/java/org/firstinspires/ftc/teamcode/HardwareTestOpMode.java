@@ -71,6 +71,7 @@ public class HardwareTestOpMode extends LinearOpMode {
         double arm_pos = ARM_UP;
         arm = hardwareMap.tryGet(Servo.class, "arm");
         if (arm != null) {
+            arm.setDirection(Servo.Direction.REVERSE);
             arm.setPosition(arm_pos);
         }
 

@@ -48,8 +48,8 @@ public abstract class RobotParent extends LinearOpMode {
 
     protected Servo secondArm = null; //this arm is the one that picks up specimens
 
-    public static double ARM_UP = 0.225;
-    public static double ARM_DOWN = 0.655;
+    public static double ARM_UP = 0.24;
+    public static double ARM_DOWN = 0.75;
 
     static final double DRIVE_GEAR_REDUCTION = 1.0;
     static final double WHEEL_DIAMETER_INCHES = 102 / 25.4;
@@ -428,6 +428,7 @@ public abstract class RobotParent extends LinearOpMode {
 
         claw = hardwareMap.get(Servo.class, "claw"); //  control hub 0
         arm = hardwareMap.get(Servo.class, "arm"); // control hub 1
+        arm.setDirection(Servo.Direction.REVERSE);
         arm.setPosition(ARM_UP);
 
         armMotor = hardwareMap.get(DcMotor.class, "lift"); // Expansion hub port 0
