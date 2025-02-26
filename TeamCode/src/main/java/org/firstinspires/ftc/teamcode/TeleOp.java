@@ -172,7 +172,7 @@ public class TeleOp extends RobotParent {
             driveToDistance(0.9, 7, getHeading());
             liftBarUp();
             driveToDistance(0.7, 5.25, getHeading());
-            liftDownNoWait();
+            liftDown();
         }
     }
 
