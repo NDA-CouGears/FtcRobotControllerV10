@@ -110,6 +110,8 @@ public class AutoMode extends RobotParent {
             }
             // Pivot in place by applying the turning correction
             moveRobot(0, 0, turnSpeed);
+
+            checkSensor();
             updateTelemetry();
         }
 
@@ -175,7 +177,7 @@ public class AutoMode extends RobotParent {
                     moveRobot(driveSpeed, 0, turnSpeed);
                 }
 
-
+                checkSensor();
                 // Display drive status for the driver.
                 updateTelemetry();
             }
@@ -261,6 +263,9 @@ public class AutoMode extends RobotParent {
         }
         armMotor.setPower(0);
     }
+
+
+
 
     public void updateTelemetry(){
         YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();

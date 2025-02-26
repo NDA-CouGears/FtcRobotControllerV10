@@ -155,62 +155,6 @@ public abstract class RobotParent extends LinearOpMode {
         }
     }
 
-    protected void arm() {
-        boolean holdingAtA = false;
-        boolean holdingAtB = false;
-        if (gamepad2.y) {
-            holdingAtA = false;
-            holdingAtB = false;
-        } else if ((gamepad2.a) || (holdingAtA)) {
-            armMotor.setTargetPosition(1025);
-            armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            armMotor.setPower(1);
-
-            while (opModeIsActive() && armMotor.isBusy() && (!gamepad2.y)) {
-                idle();
-            }
-
-            armMotor.setPower(0);
-            if (!gamepad2.y) {
-                holdingAtA = true;
-            }
-        } else if ((gamepad2.b) || (holdingAtB)) {
-            armMotor.setTargetPosition(2410);
-            armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            armMotor.setPower(1);
-
-            while (opModeIsActive() && armMotor.isBusy() && (!gamepad2.y)) {
-                idle();
-            }
-
-            armMotor.setPower(0);
-            if (!gamepad2.y) {
-                holdingAtB = true;
-            }
-        } else {
-            double armMotorPower = -gamepad2.right_stick_y;
-            armMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-            if ((touchSensor.isPressed()) && (armMotorPower < 0)) {
-                armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            } else {
-                armMotor.setPower(armMotorPower);
-            }
-
-            telemetry.addData("Motor power: ", armMotor.getPower());
-            telemetry.addData("Motor position: ", armMotor.getCurrentPosition());
-        }
-    }
-
-    protected void claw() {
-        //pressing right bumper opens claw, left bumper closes claw
-        if (gamepad2.right_bumper) {
-            claw.setPosition(ClawOpen);
-        } else if (gamepad2.left_bumper) {
-            claw.setPosition(ClawClosed);
-        }
-    }
-
     public void climb() {
         double climbDelta = gamepad2.left_stick_y;
 
@@ -227,6 +171,25 @@ public abstract class RobotParent extends LinearOpMode {
 
         telemetry.addData("Climb motor pos", "%d ", climbMotor.getCurrentPosition() );
 
+        // Lock the climb at a fixed height when requested, this is for the end game so we
+        // lock out all other actions and block here
+        if (gamepad2.x) {
+            int targetHeight = climbMotor.getCurrentPosition();
+
+            while (opModeIsActive()) {
+                int curHeight = climbMotor.getCurrentPosition();
+                if (curHeight < targetHeight) {
+                    climbMotor.setPower(0.25);
+                }
+                else {
+                    climbMotor.setPower(0);
+                }
+                if (gamepad2.y) {
+                    break;
+                }
+            }
+
+        }
     }
 
     public void clearBulkCache() {
@@ -343,6 +306,8 @@ public abstract class RobotParent extends LinearOpMode {
                             left ? lateralDriveSpeed : -lateralDriveSpeed, turnSpeed);
                 }
 
+                checkSensor(); //prevent the arm from going BZZRRRR
+
                 telemetry.update();
             }
 //        } while (opModeIsActive() && localForwardSensor.getDistance(DistanceUnit.INCH) > targetForwardDistance && !gamepad1.y); // if we over shot loop again to back up a bit
@@ -374,7 +339,7 @@ public abstract class RobotParent extends LinearOpMode {
         armMotor.setPower(1);
 
         while (opModeIsActive() && armMotor.isBusy()) {
-            idle();
+            checkSensor();
         }
         armMotor.setPower(0);
     }
@@ -392,6 +357,13 @@ public abstract class RobotParent extends LinearOpMode {
             telemetry.addData("Left", "%2.2f", sensorLeftDistance.getDistance(DistanceUnit.INCH));
             telemetry.addData("Right", "%2.2f", sensorRightDistance.getDistance(DistanceUnit.INCH));
             telemetry.update();
+        }
+    }
+
+    public void checkSensor(){
+        if ((touchSensor.isPressed()) && (armMotor.getPower() < 0)) {
+            armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            armMotor.setPower(0);
         }
     }
 
