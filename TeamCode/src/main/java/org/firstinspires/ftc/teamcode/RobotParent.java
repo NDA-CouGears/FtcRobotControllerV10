@@ -244,16 +244,16 @@ public abstract class RobotParent extends LinearOpMode {
         return Range.clip(headingError * proportionalGain, -1, 1);
     }
 
-    public void driveToDistance(double maxSpeed, double targetDistance, double heading) {
+    public void driveToDistance(double maxSpeed, double targetDistance, double heading) throws InterruptedException {
         driveToDistance(maxSpeed, targetDistance, 0, heading, false, false, 0.03);
     }
-    public void driveToDistance(double maxSpeed, double targetDistance, double heading, double speedGain) {
+    public void driveToDistance(double maxSpeed, double targetDistance, double heading, double speedGain) throws InterruptedException {
         driveToDistance(maxSpeed, targetDistance, 0, heading, false, false, speedGain);
     }
-    public void driveToDistance(double maxSpeed, double targetForwardDistance, double targetLateralDistance, double heading, boolean backwards, boolean left) {
+    public void driveToDistance(double maxSpeed, double targetForwardDistance, double targetLateralDistance, double heading, boolean backwards, boolean left) throws InterruptedException {
         driveToDistance(maxSpeed, targetForwardDistance, targetLateralDistance, heading, backwards, left, 0.03);
     }
-    public void driveToDistance(double maxSpeed, double targetForwardDistance, double targetLateralDistance, double heading, boolean backwards, boolean left, double speedGain) {
+    public void driveToDistance(double maxSpeed, double targetForwardDistance, double targetLateralDistance, double heading, boolean backwards, boolean left, double speedGain) throws InterruptedException {
         clearBulkCache();
         //final double SPEED_GAIN = 0.03;   //  Forward Speed Control "Gain". e.g. Ramp up to 50% power at a 25 inch error.   (0.50 / 25.0)
         final double TURN_GAIN = 0.01;   //  Turn Control "Gain".  e.g. Ramp up to 25% power at a 25 degree error. (0.25 / 25.0)
@@ -321,10 +321,13 @@ public abstract class RobotParent extends LinearOpMode {
         armMotor.setPower(1);
 
         clearBulkCache();
+        /*
         while (opModeIsActive() && armMotor.isBusy() && !gamepad1.y) {
             idle();
         }
         armMotor.setPower(0);
+
+         */
     }
 
     public void liftBarUpNoWait() {
@@ -333,7 +336,7 @@ public abstract class RobotParent extends LinearOpMode {
         armMotor.setPower(1);
     }
 
-    public void liftDown() {
+    public void liftDown() throws InterruptedException {
         armMotor.setTargetPosition(1);
         armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         armMotor.setPower(1);
@@ -360,10 +363,20 @@ public abstract class RobotParent extends LinearOpMode {
         }
     }
 
-    public void checkSensor(){
-        if ((touchSensor.isPressed()) && (armMotor.getPower() < 0)) {
+    public void checkSensor() throws InterruptedException {
+        clearBulkCache();
+        boolean isPressed = touchSensor.isPressed();
+        double power = armMotor.getPower();
+
+        telemetry.addLine("*** isPressed: " + isPressed + "; power: " + power);
+        telemetry.update();
+
+        if ((isPressed) && (power > 0)) {
             armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             armMotor.setPower(0);
+            telemetry.addLine("*** INSIDE isPressed: " + isPressed + "; power: " + power);
+            telemetry.update();
+            Thread.sleep(2000);
         }
     }
 

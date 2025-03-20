@@ -87,7 +87,7 @@ public class AutoMode extends RobotParent {
         arm.setPosition(ARM_UP);
     }
     //moveRobot moves the robot (shocking i know). used inside the driveForward and slide methods.
-    public void turnToHeading(double maxTurnSpeed, double heading) {
+    public void turnToHeading(double maxTurnSpeed, double heading) throws InterruptedException {
         leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         leftBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -121,7 +121,7 @@ public class AutoMode extends RobotParent {
 
     public void driveStraight(double maxDriveSpeed,
                               double distance,
-                              double heading) {
+                              double heading) throws InterruptedException {
         //clear cache to get most recent encoder value(s)
         clearBulkCache();
 

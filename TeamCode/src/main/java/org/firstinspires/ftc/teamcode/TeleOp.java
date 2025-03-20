@@ -114,6 +114,7 @@ public class TeleOp extends RobotParent {
                     armMotor.setPower(1);
 
                     clearBulkCache();
+                    /*
                     while (opModeIsActive() && armMotor.isBusy() && (Math.abs(gamepad2.right_stick_y) < 0.1)) {
                         idle();
                         mecanumDrive();
@@ -125,6 +126,8 @@ public class TeleOp extends RobotParent {
                     }
 
                     armMotor.setPower(0);
+
+                     */
                 }
             } else {
                 if ((touchSensor.isPressed()) && (armMotorPower < 0)) {
@@ -167,7 +170,7 @@ public class TeleOp extends RobotParent {
         }
     }
 
-    protected void hookSample(){
+    protected void hookSample() throws InterruptedException {
         if (gamepad1.x){
             liftBarUp();
             //driveToDistance(0.9, 7, getHeading());
@@ -186,7 +189,7 @@ public class TeleOp extends RobotParent {
      */
 
     @Override
-    public void runOpMode() {
+    public void runOpMode() throws InterruptedException {
 
         initHardware();
 
