@@ -28,6 +28,7 @@ public abstract class RobotParent extends LinearOpMode {
     protected DcMotor rightBackDrive = null;
 
     protected Servo claw = null;
+    protected Servo launch = null;
     protected Servo arm = null;
 
     protected DcMotor armMotor = null;
@@ -46,6 +47,8 @@ public abstract class RobotParent extends LinearOpMode {
     final protected static double ClawClosed = 0.57;
     final protected static double ClawOpen = 0.22;
 
+    final protected static double launchUp = 0.75;
+    final protected static double launchDown = 0.25;
     protected Servo secondArm = null; //this arm is the one that picks up specimens
 
     public static double ARM_UP = 0.24;
@@ -412,6 +415,8 @@ public abstract class RobotParent extends LinearOpMode {
         rightBackDrive = hardwareMap.get(DcMotor.class, "rb_drive"); // control hub 1
 
         claw = hardwareMap.get(Servo.class, "claw"); //  control hub 0
+        launch = hardwareMap.get(Servo.class, "launch"); //  control hub 2
+        launch.setPosition(launchUp);
         arm = hardwareMap.get(Servo.class, "arm"); // control hub 1
         arm.setDirection(Servo.Direction.REVERSE);
         arm.setPosition(ARM_UP);

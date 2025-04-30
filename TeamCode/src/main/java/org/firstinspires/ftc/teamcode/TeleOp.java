@@ -158,6 +158,15 @@ public class TeleOp extends RobotParent {
         }
     }
 
+    protected void droneLaunch() {
+        //pressing right bumper opens claw, left bumper closes claw
+        if (gamepad1.a) {
+            launch.setPosition(launchUp);
+        } else if (gamepad1.b) {
+            launch.setPosition(launchDown);
+        }
+    }
+
     protected void elbowDrive() {
         if (gamepad2.dpad_down) {
             arm.setPosition(ARM_DOWN);
@@ -226,6 +235,8 @@ public class TeleOp extends RobotParent {
             hookSample();
 
             climb();
+
+            droneLaunch();
 
             //test();
 
