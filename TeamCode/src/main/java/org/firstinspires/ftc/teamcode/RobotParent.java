@@ -425,10 +425,10 @@ public abstract class RobotParent extends LinearOpMode {
 
         touchSensor = hardwareMap.get(TouchSensor.class, "touchSensor"); // control hub digital 1
 
-        sensorFrontDistance = hardwareMap.get(DistanceSensor.class, "distance"); // expansion i2c 0
-        sensorLeftDistance = hardwareMap.get(DistanceSensor.class, "left_sensor"); // expansion i2c 1
-        sensorRightDistance = hardwareMap.get(DistanceSensor.class, "right_sensor"); // control hub bus 2
-        sensorBackDistance = hardwareMap.get(DistanceSensor.class, "back_sensor"); // expansion i2c 2
+        //sensorFrontDistance = hardwareMap.get(DistanceSensor.class, "distance"); // expansion i2c 0
+        //sensorLeftDistance = hardwareMap.get(DistanceSensor.class, "left_sensor"); // expansion i2c 1
+        //sensorRightDistance = hardwareMap.get(DistanceSensor.class, "right_sensor"); // control hub bus 2
+        //sensorBackDistance = hardwareMap.get(DistanceSensor.class, "back_sensor"); // expansion i2c 2
 
 
         leftFrontDrive.setDirection(DcMotor.Direction.FORWARD);
@@ -459,20 +459,20 @@ public abstract class RobotParent extends LinearOpMode {
 
         claw.setDirection(Servo.Direction.FORWARD);
 
-        climbMotor = hardwareMap.get(DcMotor.class, "climb");
-        climbMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        climbMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        climbMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        climbMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+        //climbMotor = hardwareMap.get(DcMotor.class, "climb");
+        //climbMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //climbMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        //climbMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        //climbMotor.setDirection(DcMotorSimple.Direction.FORWARD);
 
-        climbServo = hardwareMap.get(CRServo.class, "climb_up");
+        //climbServo = hardwareMap.get(CRServo.class, "climb_up");
         /* In case we need to customize pwm range
         ServoControllerEx controller = (ServoControllerEx) climbServo.getController();
         int portNum = climbServo.getPortNumber();
         PwmControl.PwmRange range = new PwmControl.PwmRange(553,2500);
         controller.setServoPwmRange(portNum,range);
         */
-        climbServo.setDirection(DcMotorSimple.Direction.FORWARD);
+        //climbServo.setDirection(DcMotorSimple.Direction.FORWARD);
 
         List<LynxModule> allHubs = hardwareMap.getAll(LynxModule.class);
 
